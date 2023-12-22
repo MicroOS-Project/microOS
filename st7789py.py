@@ -266,7 +266,7 @@ class ST77xx:
     def fill(self, color):
         self.fill_rect(0, 0, self.width, self.height, color)
     
-    def text(self, text, x=0, y=0, color=0xffff, background=0x0000):
+    def text(display, text, x=0, y=0, color=0xffff, background=0x0000):
         x = min(display.width - 1, max(0, x))
         y = min(display.height - 1, max(0, y))
         w = display.width - x
