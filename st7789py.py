@@ -270,7 +270,7 @@ class ST77xx:
         x = min(display.width - 1, max(0, x))
         y = min(display.height - 1, max(0, y))
         w = display.width - x
-        h = min(display.height - y, 8)
+        h = min(display.height - y, 10)
         buffer = bytearray(display.width * h * 2)
         fb = framebuf.FrameBuffer(buffer, w, h, framebuf.RGB565)
         for line in text.split('\n'):
