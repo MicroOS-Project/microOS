@@ -1,8 +1,22 @@
+# MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
+
 import machine
 import utime
 import st7789py
 import rgb_text
 
+def do_connect(name, password):
+    import network
+    sta_if = network.WLAN(network.STA_IF)
+    if not sta_if.isconnected():
+        print('connecting to network...')
+        sta_if.active(True)
+        sta_if.connect(name, password)
+        while not sta_if.isconnected():
+            pass
+    print('network config:', sta_if.ifconfig())
+
+upamount = 40
 
 espcolor = st7789py.BLUE
 spi = machine.SPI(1, baudrate=40000000, polarity=1)
@@ -11,68 +25,85 @@ display.init()
 
 display.fill_rect(0, 0, 240, 240, st7789py.BLACK)
 
+
+display.fill_rect(0, 0, 240, 240, st7789py.BLACK)
+
+display.fill_rect(15, 80-upamount, 215, 70, st7789py.WHITE)
+display.fill_rect(70, 150-upamount, 100, 70, st7789py.YELLOW)
+# M
+display.line(20, 140-upamount, 30, 90-upamount, espcolor)
+display.line(30, 90-upamount, 40, 140-upamount, espcolor)
+display.line(40, 140-upamount, 50, 90-upamount, espcolor)
+display.line(50, 90-upamount, 60, 140-upamount, espcolor)
+
+# I
+display.line(70, 90-upamount, 100, 90-upamount, espcolor)
+display.line(85, 90-upamount, 85, 140-upamount, espcolor)
+display.line(70, 140-upamount, 100, 140-upamount, espcolor)
+
+# C
+display.line(110, 90-upamount, 140, 90-upamount, espcolor)
+display.line(110, 90-upamount, 110, 140-upamount, espcolor)
+display.line(110, 140-upamount, 140, 140-upamount, espcolor)
+
+
+# R
+display.line(150, 90-upamount, 150, 140-upamount, espcolor)
+display.rect(150, 90-upamount, 25, 25, espcolor)
+display.line(150, 115-upamount, 175, 140-upamount, espcolor)
+
+# O
+display.rect(190, 90-upamount, 30, 50, espcolor)
+display.rect(191, 91-upamount, 28, 48, espcolor)
+
+# O
+display.rect(80, 160-upamount, 30, 50, espcolor)
+display.rect(81, 161-upamount, 28, 48, espcolor)
+
+# S
+display.line(105+20, 90+70-upamount, 135+20, 90+70-upamount, espcolor)
+display.line(105+20, 90+70-upamount, 105+20, 115+70-upamount, espcolor)
+display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, espcolor)
+display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, espcolor)
+display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, espcolor)
+
+gc.collect()
+
 with open('systemsettings.txt') as file:
-    entries=1
+    entries = 20
     for line in file:
         line = line.rstrip('\n')
         current_setting = line.split(':')
         sv = current_setting[1]
         sn = current_setting[0]
-        if (sn == 'netstat' and entries != 23):
-            entries += 1
-            rgb_text.text(display, 'Setting net stat', 10, entries*10)
-            netstat = True
-            utime.sleep(1.25)
-        if (sn == 'screenbright' and entries != 23):
-            entries += 1
-            rgb_text.text(display, 'Setting screen brightness to'+str(sv), 10, entries*10)
-            brightness = sv
-            utime.sleep(1.25)
-        if (sn == 'screenbright' and entries != 23):
-            entries += 1
+#         if (sn == 'screenbright' and entries != 23):
+#             rgb_text.text(display, 'Setting screen brightness to'+str(sv), 10, entries*10)
+#             backlite.duty(int(sv))
+#             utime.sleep(0.5)
+        if (sn == 'netname' and entries != 23):
             rgb_text.text(display, 'Setting net name', 10, entries*10)
-            netname = sv
-            utime.sleep(1.25)
+            ssid = sv
+            utime.sleep(0.5)
         if (sn == 'netpass' and entries != 23):
-            entries += 1
             rgb_text.text(display, 'Setting net pass', 10, entries*10)
-            netpass = sv
-            utime.sleep(1.25)
+            passwd = sv
+            utime.sleep(0.5)
+        if (sn == 'netstat' and entries != 23):
+            if (sv == 'on'):
+                rgb_text.text(display, 'Connecting', 10, entries*10)
+                do_connect(ssid, passwd)
+                utime.sleep(0.5)
+            else:
+                rgb_text.text(display, 'Wifi is off', 10, entries*10)
         if (sn == 'OSversion' and entries != 23):
-            entries += 1
             rgb_text.text(display, 'Getting os version', 10, entries*10)
             osversion = sv
-            utime.sleep(1.25)
-        elif(entries >= 23):
-            display.fill_rect(0, 0, 240, 240, st7789py.BLACK)
+            utime.sleep(0.5)
 
 
-display.fill_rect(0, 0, 240, 240, st7789py.BLACK)
-
-display.fill_rect(45, 80, 150, 70, st7789py.WHITE)
-# E
-display.line(55, 90, 55, 140, espcolor)
-display.line(55, 90, 85, 90, espcolor)
-display.line(55, 140, 85, 140, espcolor)
-display.line(55, 115, 75, 115, espcolor)
-utime.sleep(0.5)
-# S
-display.line(105, 90, 135, 90, espcolor)
-display.line(105, 90, 105, 115, espcolor)
-display.line(105, 115, 135, 115, espcolor)
-display.line(135, 115, 135, 140, espcolor)
-display.line(135, 140, 105, 140, espcolor)
-utime.sleep(0.5)
-# P
-display.line(155, 90, 155, 140, espcolor)
-display.line(155, 90, 185, 90, espcolor)
-display.line(155, 115, 185, 115, espcolor)
-display.line(185, 90, 185, 115, espcolor)
-
-rgb_text.text(display, osversion,60, 160)
-
-utime.sleep(0.5)
-
+rgb_text.text(display, '       Version ' + osversion, 0, 10)
+utime.sleep(5)
+ 
 display.fill_rect(0, 0, 240, 240, st7789py.BLACK)
 
 rgb_text.text(display, 'HELLO!', 10, 10)
