@@ -1,7 +1,6 @@
 import time
 from micropython import const
 import ustruct as struct
-import framebuf
 
 # commands
 ST77XX_NOP = const(0x00)
