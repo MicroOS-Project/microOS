@@ -1,11 +1,10 @@
-screenbright:1023
-background:black
+[future]screenbright:1023
 netname:Fort Asher Bravo
 netpass:Shepherd
 netstat:off
-user1name:asherevan
-user1pass:123456
-devicename:ESP8266
-OSversion:0.0.7a
-new:Finished and refined the boot screen
+[future]user1name:asherevan
+[future]user1pass:123456
+devicename:ESP32
+OSversion:0.0.8a
+new:Add app listing and selection.
 devs:Noah Spears, Nathanael Asher
