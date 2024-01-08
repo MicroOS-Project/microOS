@@ -1,6 +1,6 @@
 [future]screenbright:1023
-netname:Fort Asher Bravo
-netpass:Shepherd
+netname:YOUR WIFI NAME
+netpass:YOUR WIFI PASS
 netstat:off
 devicename:ESP32
 OSversion:0.0.9a
