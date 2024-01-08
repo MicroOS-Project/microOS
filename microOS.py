@@ -38,31 +38,6 @@ def updateapps():
     for i in range(1, 24):
         display.rect(5, 10*i, 230, 10, st7789py.WHITE)
 
-def appmenu():
-    display.fill(st7789py.WHITE)
-
-    apps = []
-    appamount=0
-    selectedapp = 0
-
-    dircontents = os.listdir()
-    for i in dircontents:
-        if i.endswith('.app'):
-            appamount += 1
-            apps.append(i)
-            rgb_text.text(display, i, 10, 10*appamount)
-            
-    while True:
-        if vb == 0:
-            for i in range(-1, 24):
-                display.rect(5, 10*i, 230, 10, st7789py.WHITE)
-            display.rect(5, 10*selectedapp, 230, 10, st7789py.BLUE)
-            selectedapp += 1
-
-        
-        time.sleep(0.15)
-        
-
 def app_menu():
     display.fill(st7789py.WHITE)
 
@@ -72,10 +47,11 @@ def app_menu():
 
     dircontents = os.listdir()
     for i in dircontents:
-        if i.endswith('.app'):
+        if i.endswith('.app') or i.endswith('.py'):
             apps.append(i)
             rgb_text.text(display, i, 10, 10*appamount)
             appamount += 1
+            print(apps)
 
     while True:
         if selectedapp >= appamount-1:

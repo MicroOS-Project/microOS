@@ -2,9 +2,7 @@
 netname:Fort Asher Bravo
 netpass:Shepherd
 netstat:off
-[future]user1name:asherevan
-[future]user1pass:123456
 devicename:ESP32
-OSversion:0.0.8a
-new:Add app listing and selection.
+OSversion:0.0.9a
+new:Add the ability to run .py files.
 devs:Noah Spears, Nathanael Asher
