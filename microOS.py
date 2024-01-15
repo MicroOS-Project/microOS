@@ -17,8 +17,6 @@ def do_connect(name, password):
         while not sta_if.isconnected():
             pass
     print('network config:', sta_if.ifconfig())
-    
-# app menu:
 
 upamount = 40
 
@@ -33,6 +31,77 @@ display.init()
 
 import interpreter
 
+def redrawcanvas():
+    display.fill(st7789py.BLACK)
+
+    # menu:
+    selected = 0
+
+    display.fill_rect(11, 170, 60, 60, st7789py.BLACK)
+    rgb_text.text(display, '  Apps', 10, 225, color=st7789py.BLACK, background=st7789py.WHITE)
+    display.line(0, 165, 240, 165, st7789py.BLACK)
+    display.rect(9+selected*70, 168, 64, 68, espcolor)
+    display.fill_rect(15, 174, 9, 9, st7789py.WHITE)
+    display.fill_rect(35, 174, 9, 9, st7789py.WHITE)
+    display.fill_rect(55, 174, 9, 9, st7789py.WHITE)
+
+    display.fill_rect(15, 194, 9, 9, st7789py.WHITE)
+    display.fill_rect(35, 194, 9, 9, st7789py.WHITE)
+    display.fill_rect(55, 194, 9, 9, st7789py.WHITE)
+
+    display.fill_rect(15, 214, 9, 9, st7789py.WHITE)
+    display.fill_rect(35, 214, 9, 9, st7789py.WHITE)
+    display.fill_rect(55, 214, 9, 9, st7789py.WHITE)
+    
+    display.fill_rect(15, 80-upamount, 215, 70, st7789py.WHITE)
+    display.fill_rect(70, 150-upamount, 100, 70, st7789py.YELLOW)
+
+    #show symbol again
+
+    # M
+    display.line(20, 140-upamount, 30, 90-upamount, espcolor)
+    display.line(30, 90-upamount, 40, 140-upamount, espcolor)
+    display.line(40, 140-upamount, 50, 90-upamount, espcolor)
+    display.line(50, 90-upamount, 60, 140-upamount, espcolor)
+
+    # I
+    display.line(70, 90-upamount, 100, 90-upamount, espcolor)
+    display.line(85, 90-upamount, 85, 140-upamount, espcolor)
+    display.line(70, 140-upamount, 100, 140-upamount, espcolor)
+
+    # C
+    display.line(110, 90-upamount, 140, 90-upamount, espcolor)
+    display.line(110, 90-upamount, 110, 140-upamount, espcolor)
+    display.line(110, 140-upamount, 140, 140-upamount, espcolor)
+
+
+    # R
+    display.line(150, 90-upamount, 150, 140-upamount, espcolor)
+    display.rect(150, 90-upamount, 25, 25, espcolor)
+    display.line(150, 115-upamount, 175, 140-upamount, espcolor)
+
+    # O
+    display.rect(190, 90-upamount, 30, 50, espcolor)
+    display.rect(191, 91-upamount, 28, 48, espcolor)
+
+    # O
+    display.rect(80, 160-upamount, 30, 50, espcolor)
+    display.rect(81, 161-upamount, 28, 48, espcolor)
+
+    # S
+    display.line(105+20, 90+70-upamount, 135+20, 90+70-upamount, espcolor)
+    display.line(105+20, 90+70-upamount, 105+20, 115+70-upamount, espcolor)
+    display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, espcolor)
+    display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, espcolor)
+    display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, espcolor)
+
+    over = 1
+    cycles = 0
+
+    #from nums import num
+
+    curtime = time.localtime()
+    rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
 
 def updateapps():
     for i in range(1, 24):
@@ -158,65 +227,9 @@ display.fill(st7789py.BLACK)
 # menu:
 selected = 0
 
-display.fill_rect(11, 170, 60, 60, st7789py.BLACK)
-rgb_text.text(display, '  Apps', 10, 225, color=st7789py.BLACK, background=st7789py.WHITE)
-display.line(0, 165, 240, 165, st7789py.BLACK)
-display.rect(9+selected*70, 168, 64, 68, espcolor)
-display.fill_rect(15, 174, 9, 9, st7789py.WHITE)
-display.fill_rect(35, 174, 9, 9, st7789py.WHITE)
-display.fill_rect(55, 174, 9, 9, st7789py.WHITE)
-
-display.fill_rect(15, 194, 9, 9, st7789py.WHITE)
-display.fill_rect(35, 194, 9, 9, st7789py.WHITE)
-display.fill_rect(55, 194, 9, 9, st7789py.WHITE)
-
-display.fill_rect(15, 214, 9, 9, st7789py.WHITE)
-display.fill_rect(35, 214, 9, 9, st7789py.WHITE)
-display.fill_rect(55, 214, 9, 9, st7789py.WHITE)
-
 upamount = upamount + 20
 
-display.fill_rect(15, 80-upamount, 215, 70, st7789py.WHITE)
-display.fill_rect(70, 150-upamount, 100, 70, st7789py.YELLOW)
-
-#show symbol again
-
-# M
-display.line(20, 140-upamount, 30, 90-upamount, espcolor)
-display.line(30, 90-upamount, 40, 140-upamount, espcolor)
-display.line(40, 140-upamount, 50, 90-upamount, espcolor)
-display.line(50, 90-upamount, 60, 140-upamount, espcolor)
-
-# I
-display.line(70, 90-upamount, 100, 90-upamount, espcolor)
-display.line(85, 90-upamount, 85, 140-upamount, espcolor)
-display.line(70, 140-upamount, 100, 140-upamount, espcolor)
-
-# C
-display.line(110, 90-upamount, 140, 90-upamount, espcolor)
-display.line(110, 90-upamount, 110, 140-upamount, espcolor)
-display.line(110, 140-upamount, 140, 140-upamount, espcolor)
-
-
-# R
-display.line(150, 90-upamount, 150, 140-upamount, espcolor)
-display.rect(150, 90-upamount, 25, 25, espcolor)
-display.line(150, 115-upamount, 175, 140-upamount, espcolor)
-
-# O
-display.rect(190, 90-upamount, 30, 50, espcolor)
-display.rect(191, 91-upamount, 28, 48, espcolor)
-
-# O
-display.rect(80, 160-upamount, 30, 50, espcolor)
-display.rect(81, 161-upamount, 28, 48, espcolor)
-
-# S
-display.line(105+20, 90+70-upamount, 135+20, 90+70-upamount, espcolor)
-display.line(105+20, 90+70-upamount, 105+20, 115+70-upamount, espcolor)
-display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, espcolor)
-display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, espcolor)
-display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, espcolor)
+redrawcanvas()
 
 over = 1
 cycles = 0
@@ -249,6 +262,11 @@ while True:
     if (cu.value() == 0):
         if over == 1:
             app_menu()
+            redrawcanvas()
+        if over == 2:
+            print('settings')
+        if over == 3:
+            print('app store')
  
     if (over>3):
         over=1

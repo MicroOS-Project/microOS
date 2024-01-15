@@ -1,8 +1,8 @@
 [future]screenbright:1023
-netname:YOUR WIFI NAME
-netpass:YOUR WIFI PASS
+netname:Fort Asher Bravo
+netpass:Shepherd
 netstat:off
 devicename:ESP32
-OSversion:0.0.9a
-new:Add the ability to run .py files.
+OSversion:0.0.10a
+new:Add more features to the main menu.
 devs:Noah Spears, Nathanael Asher
