@@ -7,4 +7,6 @@ If you want it to run at boot put 'import microOS' into your boot.py file.
 
 TODO:
 
-fix menu bug so that first menu option stays shown (please fix)
+fix menu bug so that first app menu option stays shown (please fix)
+
+add more options to the main menu.
