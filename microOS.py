@@ -1,10 +1,10 @@
 # MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
-
+import os
+os.chdir('/system')
 import machine
 import time
 import st7789py
 import rgb_text
-import os
 from sound import playsound
 
 def do_connect(name, password):
@@ -23,6 +23,9 @@ upamount = 40
 vb = machine.Pin(27, machine.Pin.IN, machine.Pin.PULL_UP)
 cu = machine.Pin(33, machine.Pin.IN, machine.Pin.PULL_UP)
 pb = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
+sc = machine.Pin(22, machine.Pin.OUT)
+
+sc.on()
 
 espcolor = st7789py.BLUE
 spi = machine.SPI(1, baudrate=40000000, polarity=1)
@@ -36,10 +39,11 @@ def redrawcanvas():
 
     # menu:
     selected = 0
+    display.line(0, 165, 240, 165, st7789py.WHITE)
 
+#apps button
     display.fill_rect(11, 170, 60, 60, st7789py.BLACK)
-    rgb_text.text(display, '  Apps', 10, 225, color=st7789py.BLACK, background=st7789py.WHITE)
-    display.line(0, 165, 240, 165, st7789py.BLACK)
+    rgb_text.text(display, '  Apps   Settings  Store', 10, 225, color=st7789py.WHITE, background=st7789py.BLACK)
     display.rect(9+selected*70, 168, 64, 68, espcolor)
     display.fill_rect(15, 174, 9, 9, st7789py.WHITE)
     display.fill_rect(35, 174, 9, 9, st7789py.WHITE)
@@ -53,11 +57,17 @@ def redrawcanvas():
     display.fill_rect(35, 214, 9, 9, st7789py.WHITE)
     display.fill_rect(55, 214, 9, 9, st7789py.WHITE)
     
+#settings button
+    
+#store button
+    display.fill_rect(160, 195, 40, 25, st7789py.WHITE)
+    display.fill_rect(165, 185, 30, 10, st7789py.WHITE)
+    display.fill_rect(170, 190, 20, 5, st7789py.BLACK)
+
     display.fill_rect(15, 80-upamount, 215, 70, st7789py.WHITE)
     display.fill_rect(70, 150-upamount, 100, 70, st7789py.YELLOW)
 
     #show symbol again
-
     # M
     display.line(20, 140-upamount, 30, 90-upamount, espcolor)
     display.line(30, 90-upamount, 40, 140-upamount, espcolor)
@@ -232,12 +242,13 @@ upamount = upamount + 20
 redrawcanvas()
 
 over = 1
-cycles = 0
 
 #from nums import num
 
 curtime = time.localtime()
 rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
+
+cycles = 0 - (curtime[4] / 0.15)
 
 while True:
     time.sleep(0.15)
@@ -273,8 +284,9 @@ while True:
         
     if (over<1):
         over=3
-    
-    if cycles >=500:
+
+    if cycles == 400:
         curtime = time.localtime()
         rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
+        cycles = 0
     cycles += 1
