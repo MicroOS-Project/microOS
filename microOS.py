@@ -124,13 +124,12 @@ def app_menu():
     appamount=0
     selectedapp = 0
 
-    dircontents = os.listdir()
+    dircontents = os.listdir('/apps')
     for i in dircontents:
-        if i.endswith('.app') or i.endswith('.py'):
-            apps.append(i)
-            rgb_text.text(display, i, 10, 10*appamount)
-            appamount += 1
-            print(apps)
+        apps.append(i)
+        rgb_text.text(display, i, 10, 10*appamount)
+        appamount += 1
+        print(apps)
 
     while True:
         if selectedapp >= appamount-1:
@@ -248,7 +247,7 @@ over = 1
 curtime = time.localtime()
 rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
 
-cycles = 0 - (curtime[4] / 0.15)
+cycles = 0
 
 while True:
     time.sleep(0.15)
@@ -285,7 +284,7 @@ while True:
     if (over<1):
         over=3
 
-    if cycles == 400:
+    if cycles == 6:
         curtime = time.localtime()
         rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
         cycles = 0
