@@ -1,8 +1,7 @@
-[future]screenbright:1023
-netname:NETNAME
-netpass:NETPASS
+netname:Fort Asher Bravo
+netpass:Shepherd
 netstat:off
 devicename:ESP32
-OSversion:0.0.10a
-new:Add more features to the main menu.
+OSversion:0.0.11a
+new:Add icons to the main menu.
 devs:Noah Spears, Nathanael Asher

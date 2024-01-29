@@ -58,6 +58,9 @@ def redrawcanvas():
     display.fill_rect(55, 214, 9, 9, st7789py.WHITE)
     
 #settings button
+    display.fill_rect(107, 185, 6, 40, st7789py.WHITE)
+    display.fill_rect(95, 170, 30, 25, st7789py.WHITE)
+    display.fill_rect(100, 170, 20, 20, st7789py.BLACK)
     
 #store button
     display.fill_rect(160, 195, 40, 25, st7789py.WHITE)
