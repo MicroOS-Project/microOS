@@ -1,7 +1,7 @@
 netname:Fort Asher Bravo
 netpass:Shepherd
-netstat:off
+netstat:on
 devicename:ESP32
-OSversion:0.0.11a
-new:Add icons to the main menu.
+OSversion:0.0.12a
+new:fix bug in main menu.
 devs:Noah Spears, Nathanael Asher

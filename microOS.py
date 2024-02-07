@@ -29,7 +29,7 @@ sc.on()
 
 espcolor = st7789py.BLUE
 spi = machine.SPI(1, baudrate=40000000, polarity=1)
-display = st7789py.ST7789(spi, 240, 240, reset=machine.Pin(5, machine.Pin.OUT), dc=machine.Pin(4, machine.Pin.OUT))
+display = st7789py.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), dc=machine.Pin(26, machine.Pin.OUT))
 display.init()
 
 import interpreter
@@ -116,6 +116,12 @@ def redrawcanvas():
     curtime = time.localtime()
     rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
 
+def settings():
+    display.fill(st7789py.BLACK)
+    while True:
+        if pb.value() == 0:
+            break
+
 def updateapps():
     for i in range(1, 24):
         display.rect(5, 10*i, 230, 10, st7789py.WHITE)
@@ -134,6 +140,7 @@ def app_menu():
         appamount += 1
         print(apps)
 
+    updateapps()
     while True:
         if selectedapp >= appamount-1:
             selectedapp = -1
@@ -230,7 +237,6 @@ with open('systemsettings.txt') as file:
             osversion = sv
             
 
-
 rgb_text.text(display, '       Version ' + osversion, 0, 10)
 time.sleep(2.5)
 
@@ -245,18 +251,18 @@ redrawcanvas()
 
 over = 1
 
-#from nums import num
-
 curtime = time.localtime()
 rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
 
 cycles = 0
 
+display.rect(9, 168, 64, 68, st7789py.BLUE)
+display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
+display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
+
+
 while True:
     time.sleep(0.15)
-    display.rect(9, 168, 64, 68, st7789py.BLUE)
-    display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
-    display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
     if (over == 1):
         display.rect(9+0*70, 168, 64, 68, st7789py.RED)
         
@@ -268,6 +274,10 @@ while True:
         
     if (vb.value() == 0):
         over+=1
+        display.rect(9, 168, 64, 68, st7789py.BLUE)
+        display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
+        display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
+
 
     if (pb.value() == 0):
         over-=1
@@ -278,6 +288,7 @@ while True:
             redrawcanvas()
         if over == 2:
             print('settings')
+            settings()
         if over == 3:
             print('app store')
  
