@@ -20,7 +20,7 @@ def do_connect(name, password):
 
 upamount = 40
 
-vb = machine.Pin(27, machine.Pin.IN, machine.Pin.PULL_UP)
+vb = machine.Pin(5, machine.Pin.IN, machine.Pin.PULL_UP)
 cu = machine.Pin(33, machine.Pin.IN, machine.Pin.PULL_UP)
 pb = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
 sc = machine.Pin(22, machine.Pin.OUT)
@@ -260,9 +260,11 @@ display.rect(9, 168, 64, 68, st7789py.BLUE)
 display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
 display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
 
-
 while True:
     time.sleep(0.15)
+    display.rect(9, 168, 64, 68, st7789py.BLUE)
+    display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
+    display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
     if (over == 1):
         display.rect(9+0*70, 168, 64, 68, st7789py.RED)
         
@@ -274,11 +276,6 @@ while True:
         
     if (vb.value() == 0):
         over+=1
-        display.rect(9, 168, 64, 68, st7789py.BLUE)
-        display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
-        display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
-
-
     if (pb.value() == 0):
         over-=1
         
@@ -289,6 +286,7 @@ while True:
         if over == 2:
             print('settings')
             settings()
+            redrawcanvas()
         if over == 3:
             print('app store')
  
