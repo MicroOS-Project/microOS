@@ -2,6 +2,6 @@ netname:Fort Asher Bravo
 netpass:Shepherd
 netstat:on
 devicename:ESP32
-OSversion:0.0.13a
+OSversion:0.13.1a
 new:revert changes because they were not functional.
 devs:Noah Spears, Nathanael Asher

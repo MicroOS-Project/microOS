@@ -7,6 +7,13 @@ import st7789py
 import rgb_text
 from sound import playsound
 
+vb = machine.Pin(5, machine.Pin.IN, machine.Pin.PULL_UP)
+cu = machine.Pin(33, machine.Pin.IN, machine.Pin.PULL_UP)
+pb = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
+sc = machine.Pin(22, machine.Pin.OUT)
+
+sc.on()
+
 def do_connect(name, password):
     import network
     sta_if = network.WLAN(network.STA_IF)
@@ -19,13 +26,6 @@ def do_connect(name, password):
     print('network config:', sta_if.ifconfig())
 
 upamount = 40
-
-vb = machine.Pin(5, machine.Pin.IN, machine.Pin.PULL_UP)
-cu = machine.Pin(33, machine.Pin.IN, machine.Pin.PULL_UP)
-pb = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
-sc = machine.Pin(22, machine.Pin.OUT)
-
-sc.on()
 
 espcolor = st7789py.BLUE
 spi = machine.SPI(1, baudrate=40000000, polarity=1)
@@ -118,16 +118,19 @@ def redrawcanvas():
 
 def settings():
     display.fill(st7789py.BLACK)
+    
+    rgb_text.text(display, '           Settings', 0, 1)
+    
     while True:
         if pb.value() == 0:
             break
 
 def updateapps():
     for i in range(1, 24):
-        display.rect(5, 10*i, 230, 10, st7789py.WHITE)
+        display.rect(5, 10*i, 230, 10, st7789py.BLACK)
 
 def app_menu():
-    display.fill(st7789py.WHITE)
+    display.fill(st7789py.BLACK)
 
     apps = []
     appamount=0
@@ -252,7 +255,9 @@ redrawcanvas()
 over = 1
 
 curtime = time.localtime()
-rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
+if curtime[3] > 12:
+    hour = curtime[3] - 12
+rgb_text.text(display, '            '+str(hour)+':'+str(curtime[4]))
 
 cycles = 0
 
@@ -298,6 +303,8 @@ while True:
 
     if cycles == 6:
         curtime = time.localtime()
-        rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
+        if curtime[3] > 12:
+            hour = curtime[3] - 12
+        rgb_text.text(display, '            '+str(hour)+':'+str(curtime[4]))
         cycles = 0
     cycles += 1
