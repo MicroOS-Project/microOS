@@ -1,7 +1,7 @@
 netname:Fort Asher Bravo
 netpass:Shepherd
-netstat:on
+networkstat:off
 devicename:ESP32
-OSversion:0.13.1a
-new:revert changes because they were not functional.
+OSversion:0.13.3a
+new:Change input device to be\nthe joystick.
 devs:Noah Spears, Nathanael Asher

@@ -6,17 +6,25 @@ import time
 import st7789py
 import rgb_text
 from sound import playsound
+import network
+from micropython import const
 
-vb = machine.Pin(5, machine.Pin.IN, machine.Pin.PULL_UP)
-cu = machine.Pin(33, machine.Pin.IN, machine.Pin.PULL_UP)
-pb = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
+sta_if = network.WLAN(network.STA_IF)
+
+xa = machine.ADC(36)
+ya = machine.ADC(39)
+btn = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
 sc = machine.Pin(22, machine.Pin.OUT)
+
+xa.atten(xa.ATTN_11DB)
+ya.atten(ya.ATTN_11DB)
 
 sc.on()
 
+minval = const(500)
+maxval = const(2500)
+
 def do_connect(name, password):
-    import network
-    sta_if = network.WLAN(network.STA_IF)
     if not sta_if.isconnected():
         print('connecting to network...')
         sta_if.active(True)
@@ -111,19 +119,52 @@ def redrawcanvas():
     over = 1
     cycles = 0
 
-    #from nums import num
+def updatesettings():
+    for i in range(0, 24):
+        display.rect(1, 19+(15*i), 238, 12, st7789py.BLACK)
 
-    curtime = time.localtime()
-    rgb_text.text(display, '            '+str(curtime[3])+':'+str(curtime[4]))
+def changeon():
+    netstat = 'on'
+def changeoff():
+    netstat = 'off'
 
 def settings():
     display.fill(st7789py.BLACK)
     
     rgb_text.text(display, '           Settings', 0, 1)
     
+    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
+    rgb_text.text(display, 'WiFi Name:  '+ssid, 2, 35)
+    rgb_text.text(display, 'WiFi Pass:  '+passwd, 2, 50)
+    
+    selectedsetting = 0
+    
     while True:
-        if pb.value() == 0:
+        time.sleep(0.15)
+        if selectedsetting > 5:
+            updatesettings()
+            selectedsetting = 0
+        if xa.read() < minval:
             break
+        if ya.read() > maxval:
+            selectedsetting +=1
+            updatesettings()
+        if ya.read() < minval:
+            selectedsetting -=1
+            updatesettings()
+        if btn.value() == 0:
+            if selectedsetting == 0:
+                if netstat == 'off':
+                    do_connect(ssid, passwd)
+                    netstat = 'on'
+                    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
+                if netstat == 'on':
+                    sta_if.active(False)
+                    sta_if.disconnect()
+                    netstat = 'off'
+                    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
+            
+        display.rect(1, 19+(selectedsetting*15), 238, 12, st7789py.WHITE)
 
 def updateapps():
     for i in range(1, 24):
@@ -148,16 +189,20 @@ def app_menu():
         if selectedapp >= appamount-1:
             selectedapp = -1
             
-        if cu.value() == 0:
+        if btn.value() == 0:
             interpreter.interpret(apps[selectedapp])
 
-        if pb.value() == 0:
-            break
+        if ya.read() < minval:
+            print(selectedapp)
+            updateapps()
+            selectedapp -= 1
 
-        if vb.value() == 0:
+        if ya.read() > maxval:
             print(selectedapp)
             updateapps()
             selectedapp += 1
+        if xa.read() < minval:
+            break
             
         display.rect(5, 10 * selectedapp, 230, 10, color=st7789py.RED)
 
@@ -214,33 +259,72 @@ display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, espcolor)
 display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, espcolor)
 display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, espcolor)
 
+newval = ''
+netstat = ''
 
 with open('systemsettings.txt') as file:
-    entries = 20
     for line in file:
         line = line.rstrip('\n')
         current_setting = line.split(':')
         sv = current_setting[1]
         sn = current_setting[0]
-        if (sn == 'netname' and entries != 23):
-            #rgb_text.text(display, 'Setting net name', 10, entries*10)
-            ssid = sv
+        if sn == 'netname':
+            ssid = sv.split('\r')[0]
             
-        if (sn == 'netpass' and entries != 23):
-            #rgb_text.text(display, 'Setting net pass', 10, entries*10)
-            passwd = sv
+        if sn == 'netpass':
+            passwd = sv.split('\r')[0]
             
-        if (sn == 'netstat' and entries != 23):
-            if (sv == 'on'):
-                #rgb_text.text(display, 'Connecting', 10, entries*10)
+        if sn == 'networkstat':
+            if sv == 'on':
                 do_connect(ssid, passwd)
-                
-        if (sn == 'OSversion' and entries != 23):
-            #rgb_text.text(display, 'Getting os version', 10, entries*10)
-            osversion = sv
-            
+            netstat = sv.split('\r')[0]
+
+        if sn == 'OSversion':
+            osversion = sv.split('\r')[0]
+
+        if sn == 'new':
+            newval = sv.split('\r')[0]
 
 rgb_text.text(display, '       Version ' + osversion, 0, 10)
+
+def settings():
+    display.fill(st7789py.BLACK)
+    
+    rgb_text.text(display, '           Settings', 0, 1)
+    
+    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
+    rgb_text.text(display, 'WiFi Name:  '+ssid, 2, 35)
+    rgb_text.text(display, 'WiFi Pass:  '+passwd, 2, 50)
+    
+    selectedsetting = 0
+    
+    while True:
+        time.sleep(0.15)
+        if selectedsetting > 5:
+            updatesettings()
+            selectedsetting = 0
+        if xa.read() < minval:
+            break
+        if ya.read() > maxval:
+            selectedsetting +=1
+            updatesettings()
+        if ya.read() < minval:
+            selectedsetting -=1
+            updatesettings()
+        if btn.value() == 0:
+            if selectedsetting == 0:
+                if netstat == 'off':
+                    do_connect(ssid, passwd)
+                    netstat = 'on'
+                    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
+                if netstat == 'on':
+                    sta_if.active(False)
+                    sta_if.disconnect()
+                    netstat = 'off'
+                    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
+            
+        display.rect(1, 19+(selectedsetting*15), 238, 12, st7789py.WHITE)
+
 time.sleep(2.5)
 
 display.fill(st7789py.BLACK)
@@ -254,9 +338,12 @@ redrawcanvas()
 
 over = 1
 
+hour = 0
 curtime = time.localtime()
 if curtime[3] > 12:
     hour = curtime[3] - 12
+else:
+    hour = curtime[3]
 rgb_text.text(display, '            '+str(hour)+':'+str(curtime[4]))
 
 cycles = 0
@@ -267,9 +354,9 @@ display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
 
 while True:
     time.sleep(0.15)
-    display.rect(9, 168, 64, 68, st7789py.BLUE)
-    display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
-    display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
+    display.rect(9, 168, 64, 68, st7789py.BLACK)
+    display.rect(9+1*70, 168, 64, 68, st7789py.BLACK)
+    display.rect(9+2*70, 168, 64, 68, st7789py.BLACK)
     if (over == 1):
         display.rect(9+0*70, 168, 64, 68, st7789py.RED)
         
@@ -279,12 +366,12 @@ while True:
     if (over == 3):
         display.rect(9+2*70, 168, 64, 68, st7789py.RED)
         
-    if (vb.value() == 0):
+    if (xa.read() > maxval):
         over+=1
-    if (pb.value() == 0):
+    if (xa.read() < minval):
         over-=1
         
-    if (cu.value() == 0):
+    if (btn.value() == 0):
         if over == 1:
             app_menu()
             redrawcanvas()
