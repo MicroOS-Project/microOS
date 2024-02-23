@@ -123,11 +123,6 @@ def updatesettings():
     for i in range(0, 24):
         display.rect(1, 19+(15*i), 238, 12, st7789py.BLACK)
 
-def changeon():
-    netstat = 'on'
-def changeoff():
-    netstat = 'off'
-
 def settings():
     display.fill(st7789py.BLACK)
     
@@ -286,45 +281,6 @@ with open('systemsettings.txt') as file:
             newval = sv.split('\r')[0]
 
 rgb_text.text(display, '       Version ' + osversion, 0, 10)
-
-def settings():
-    display.fill(st7789py.BLACK)
-    
-    rgb_text.text(display, '           Settings', 0, 1)
-    
-    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
-    rgb_text.text(display, 'WiFi Name:  '+ssid, 2, 35)
-    rgb_text.text(display, 'WiFi Pass:  '+passwd, 2, 50)
-    
-    selectedsetting = 0
-    
-    while True:
-        time.sleep(0.15)
-        if selectedsetting > 5:
-            updatesettings()
-            selectedsetting = 0
-        if xa.read() < minval:
-            break
-        if ya.read() > maxval:
-            selectedsetting +=1
-            updatesettings()
-        if ya.read() < minval:
-            selectedsetting -=1
-            updatesettings()
-        if btn.value() == 0:
-            if selectedsetting == 0:
-                if netstat == 'off':
-                    do_connect(ssid, passwd)
-                    netstat = 'on'
-                    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
-                if netstat == 'on':
-                    sta_if.active(False)
-                    sta_if.disconnect()
-                    netstat = 'off'
-                    rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
-            
-        display.rect(1, 19+(selectedsetting*15), 238, 12, st7789py.WHITE)
-
 time.sleep(2.5)
 
 display.fill(st7789py.BLACK)

@@ -2,6 +2,6 @@ netname:Fort Asher Bravo
 netpass:Shepherd
 networkstat:off
 devicename:ESP32
-OSversion:0.13.3a
-new:Change input device to be\nthe joystick.
+OSversion:0.13.4a
+new:Some home screen things and add settings.
 devs:Noah Spears, Nathanael Asher
