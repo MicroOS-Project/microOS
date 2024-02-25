@@ -52,7 +52,6 @@ def redrawcanvas():
 #apps button
     display.fill_rect(11, 170, 60, 60, st7789py.BLACK)
     rgb_text.text(display, '  Apps   Settings  Store', 10, 225, color=st7789py.WHITE, background=st7789py.BLACK)
-    display.rect(9+selected*70, 168, 64, 68, espcolor)
     display.fill_rect(15, 174, 9, 9, st7789py.WHITE)
     display.fill_rect(35, 174, 9, 9, st7789py.WHITE)
     display.fill_rect(55, 174, 9, 9, st7789py.WHITE)
@@ -150,13 +149,13 @@ def settings():
         if btn.value() == 0:
             if selectedsetting == 0:
                 if netstat == 'off':
+                    exec("netstat = 'on'")
                     do_connect(ssid, passwd)
-                    netstat = 'on'
                     rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
-                if netstat == 'on':
-                    sta_if.active(False)
+                elif netstat == 'on':
+                    exec("netstat = 'off'")
                     sta_if.disconnect()
-                    netstat = 'off'
+                    sta_if.active(False)
                     rgb_text.text(display, 'WiFi Stat:  '+netstat, 2, 20)
             
         display.rect(1, 19+(selectedsetting*15), 238, 12, st7789py.WHITE)
@@ -303,10 +302,6 @@ else:
 rgb_text.text(display, '            '+str(hour)+':'+str(curtime[4]))
 
 cycles = 0
-
-display.rect(9, 168, 64, 68, st7789py.BLUE)
-display.rect(9+1*70, 168, 64, 68, st7789py.BLUE)
-display.rect(9+2*70, 168, 64, 68, st7789py.BLUE)
 
 while True:
     time.sleep(0.15)
