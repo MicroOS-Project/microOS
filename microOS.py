@@ -47,11 +47,9 @@ def redrawcanvas():
 
     # menu:
     selected = 0
-    display.line(0, 165, 240, 165, st7789py.WHITE)
 
 #apps button
-    display.fill_rect(11, 170, 60, 60, st7789py.BLACK)
-    rgb_text.text(display, '  Apps   Settings  Store', 10, 225, color=st7789py.WHITE, background=st7789py.BLACK)
+    rgb_text.text(display, '  Apps    Settings   Store', 10, 225, color=st7789py.WHITE, background=st7789py.BLACK)
     display.fill_rect(15, 174, 9, 9, st7789py.WHITE)
     display.fill_rect(35, 174, 9, 9, st7789py.WHITE)
     display.fill_rect(55, 174, 9, 9, st7789py.WHITE)
@@ -63,16 +61,16 @@ def redrawcanvas():
     display.fill_rect(15, 214, 9, 9, st7789py.WHITE)
     display.fill_rect(35, 214, 9, 9, st7789py.WHITE)
     display.fill_rect(55, 214, 9, 9, st7789py.WHITE)
-    
+
 #settings button
-    display.fill_rect(107, 185, 6, 40, st7789py.WHITE)
-    display.fill_rect(95, 170, 30, 25, st7789py.WHITE)
-    display.fill_rect(100, 170, 20, 20, st7789py.BLACK)
-    
+    display.fill_rect(107+10, 185, 6, 40, st7789py.WHITE)
+    display.fill_rect(95+10, 170, 30, 25, st7789py.WHITE)
+    display.fill_rect(100+10, 170, 20, 20, st7789py.BLACK)
+
 #store button
-    display.fill_rect(160, 195, 40, 25, st7789py.WHITE)
-    display.fill_rect(165, 185, 30, 10, st7789py.WHITE)
-    display.fill_rect(170, 190, 20, 5, st7789py.BLACK)
+    display.fill_rect(160+13, 195, 40, 25, st7789py.WHITE)
+    display.fill_rect(165+13, 185, 30, 10, st7789py.WHITE)
+    display.fill_rect(170+13, 190, 20, 5, st7789py.BLACK)
 
     display.fill_rect(15, 80-upamount, 215, 70, st7789py.WHITE)
     display.fill_rect(70, 150-upamount, 100, 70, st7789py.YELLOW)
@@ -139,6 +137,10 @@ def settings():
             updatesettings()
             selectedsetting = 0
         if xa.read() < minval:
+            settingsfile = 'netname:'+ssid+'\nnetpass:'+passwd+'\nnetstat:'+netstat+'\nOSversion:'+osversion
+            file = open('systemsettings.txt', 'w')
+            file.write(settingsfile)
+            file.close()
             break
         if ya.read() > maxval:
             selectedsetting +=1
@@ -182,6 +184,8 @@ def app_menu():
     while True:
         if selectedapp >= appamount-1:
             selectedapp = -1
+        if selectedapp < -1:
+            selectedapp = appamount - 1
             
         if btn.value() == 0:
             interpreter.interpret(apps[selectedapp])
@@ -268,7 +272,7 @@ with open('systemsettings.txt') as file:
         if sn == 'netpass':
             passwd = sv.split('\r')[0]
             
-        if sn == 'networkstat':
+        if sn == 'netstat':
             if sv == 'on':
                 do_connect(ssid, passwd)
             netstat = sv.split('\r')[0]
@@ -306,16 +310,16 @@ cycles = 0
 while True:
     time.sleep(0.15)
     display.rect(9, 168, 64, 68, st7789py.BLACK)
-    display.rect(9+1*70, 168, 64, 68, st7789py.BLACK)
-    display.rect(9+2*70, 168, 64, 68, st7789py.BLACK)
+    display.rect(9+1*80, 168, 64, 68, st7789py.BLACK)
+    display.rect(6+2*80, 168, 64, 68, st7789py.BLACK)
     if (over == 1):
-        display.rect(9+0*70, 168, 64, 68, st7789py.RED)
+        display.rect(9+0*80, 168, 64, 68, st7789py.RED)
         
     if (over == 2):
-        display.rect(9+1*70, 168, 64, 68, st7789py.RED)
+        display.rect(9+1*80, 168, 64, 68, st7789py.RED)
         
     if (over == 3):
-        display.rect(9+2*70, 168, 64, 68, st7789py.RED)
+        display.rect(6+2*80, 168, 64, 68, st7789py.RED)
         
     if (xa.read() > maxval):
         over+=1

@@ -1,7 +1,4 @@
 netname:Fort Asher Bravo
 netpass:Shepherd
-networkstat:off
-devicename:ESP32
-OSversion:0.13.5a
-new:Some bugs in settings and on returning to home.
-devs:Noah Spears, Nathanael Asher
+netstat:off
+OSversion:0.13.6a
