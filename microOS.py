@@ -1,4 +1,12 @@
-# MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
+# 
+#  __  __ _                 ____   _____  
+# |  \/  (_)               / __ \ / ____| 
+# | \  / |_  ___ _ __ ___ | |  | | (___   
+# | |\/| | |/ __| '__/ _ \| |  | |\___ \  
+# | |  | | | (__| | | (_) | |__| |____) | 
+# |_|  |_|_|\___|_|  \___/ \____/|_____/  
+#
+# A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
 import os
 os.chdir('/system')
 import machine
