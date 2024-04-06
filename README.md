@@ -9,3 +9,5 @@ TODO:
 Fix menu bug so that first app menu option stays shown (please fix)
 
 Add documentation.
+
+Make the screensaver appear on all pages.
