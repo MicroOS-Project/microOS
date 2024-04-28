@@ -2,7 +2,11 @@ Our attempt at creating an operating system like program for ESP32 (for now).
 
 You will need to upload [this](https://github.com/russhughes/st7789_mpy) firmware to your device in order for it to work.
 
-If you want it to run at boot put 'import microOS' into your boot.py file.
+If you want it to run at boot put this into your boot.py file.
+
+   ```sh
+   import system.microOS
+   ```
 
 TODO:
 
