@@ -4,14 +4,14 @@ os.chdir('/system')
 import machine
 import time
 import st7789
-import rgb_text
 from sound import playsound
 import network
 from micropython import const
 import sys
 import random
 import vga1_8x8 as font
-import uasyncio as asyncio
+import urequests as requests
+#import _thread as thread
 
 sta_if = network.WLAN(network.STA_IF)
 
@@ -20,13 +20,25 @@ ya = machine.ADC(machine.Pin(39))
 btn = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
 sc = machine.Pin(22, machine.Pin.OUT)
 
+sc.on()
+
 xa.atten(xa.ATTN_11DB)
 ya.atten(ya.ATTN_11DB)
 
-sc.on()
-
 minval = const(500)
 maxval = const(2500)
+
+upamount = 40
+
+espcolor = st7789.BLUE
+spi = machine.SPI(1, baudrate=40000000, polarity=1)
+display = st7789.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), dc=machine.Pin(26, machine.Pin.OUT), backlight=sc)
+display.init()
+
+ssid = ''
+passwd = ''
+
+import interpreter
 
 def do_connect(name, password):
     if not sta_if.isconnected():
@@ -37,39 +49,212 @@ def do_connect(name, password):
             pass
     print('network config:', sta_if.ifconfig())
 
+def keyboard(pretyped=''):
+    display.fill(0)
+    typed = pretyped
+    selected = ''
+    letters = ('1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','[',']','\\',';','',"'",',',' ',' ',' ','/','.',' ',' ')
+    lettersupper = ('!','@','#','$','%','^','&','*','(',')','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','{','}','|',':','','"','<',' ',' ',' ','?','>',' ',' ')
+    letter = 0
+
+    row = 0
+    collum = 0
+    width = 20
+
+    display.rect(width, 2, 200, 15, st7789.WHITE)
+
+    def updatekeyboard():
+        for i in range(0,5):
+            for n in range(0,10):
+                display.rect(2+n*24, 150+i*17, 20, 15, st7789.WHITE)
+
+    updatekeyboard()
+
+    for i in range(0,5):
+        for n in range(0,10):
+            display.text(font, letters[letter], 7+n*24, 153+i*17, st7789.YELLOW)
+            letter += 1
+
+    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
+    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
+
+    display.rect(74, 218, 68, 15, st7789.WHITE)
+    display.rect(194, 218, 44, 15, st7789.WHITE)
+
+    display.text(font, 'UP', 5, 222, st7789.YELLOW)
+    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
+    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
+
+    display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
+
+    upper = False
+
+    while True:
+        time.sleep(0.15)
+        display.rect(2+collum*24, 150+row*17, width, 15, st7789.WHITE)
+
+        display.text(font, typed, 25, 5, st7789.YELLOW)
+        if xa.read() <= minval:
+            collum -= 1
+        if xa.read() >= maxval:
+            collum += 1
+
+        if ya.read() <= minval:
+            row -= 1
+        if ya.read() >= maxval:
+            row += 1
+            
+        if row < 0:
+            row = 0
+        if collum < 0:
+            collum = 0
+        if row > 4:
+            row = 4
+        if collum > 9:
+            collum = 9
+            
+        if row == 4 and collum >= 3 and collum <= 5:
+            width = 68
+        elif row == 4 and collum >= 8 and collum <= 9:
+            width = 44
+        else:
+            width = 20
+            
+        if btn.value() == 0:
+            if selected == 'enter':
+                return typed
+                break
+            else:
+                if upper == False:
+                    selected = letters[row * 10 + collum]
+                    typed = typed + selected
+                else:
+                    selected = lettersupper[row * 10 + collum]
+                    typed = typed + selected
+                    upper = False
+        if row == 4 and collum == 8:
+            selected = 'enter'
+        elif row == 4 and collum == 0:
+            selected = ''
+            upper = True
+
+        display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
+        
+def unubstructingkeyboard(pretyped=''):
+    typed = pretyped
+    selected = ''
+    letters = ('1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','[',']','\\',';','',"'",',',' ',' ',' ','/','.',' ',' ')
+    lettersupper = ('!','@','#','$','%','^','&','*','(',')','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','{','}','|',':','','"','<',' ',' ',' ','?','>',' ',' ')
+    letter = 0
+
+    row = 0
+    collum = 0
+    width = 20
+
+    display.rect(width, 2, 200, 15, st7789.WHITE)
+
+    def updatekeyboard():
+        for i in range(0,5):
+            for n in range(0,10):
+                display.rect(2+n*24, 150+i*17, 20, 15, st7789.WHITE)
+
+    updatekeyboard()
+
+    for i in range(0,5):
+        for n in range(0,10):
+            display.text(font, letters[letter], 7+n*24, 153+i*17, st7789.YELLOW)
+            letter += 1
+
+    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
+    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
+
+    display.rect(74, 218, 68, 15, st7789.WHITE)
+    display.rect(194, 218, 44, 15, st7789.WHITE)
+
+    display.text(font, 'UP', 5, 222, st7789.YELLOW)
+    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
+    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
+
+    display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
+
+    upper = False
+
+    while True:
+        time.sleep(0.15)
+        display.rect(2+collum*24, 150+row*17, width, 15, st7789.WHITE)
+
+        display.text(font, typed, 25, 5, st7789.YELLOW)
+        if xa.read() <= minval:
+            collum -= 1
+        if xa.read() >= maxval:
+            collum += 1
+
+        if ya.read() <= minval:
+            row -= 1
+        if ya.read() >= maxval:
+            row += 1
+            
+        if row < 0:
+            row = 0
+        if collum < 0:
+            collum = 0
+        if row > 4:
+            row = 4
+        if collum > 9:
+            collum = 9
+            
+        if row == 4 and collum >= 3 and collum <= 5:
+            width = 68
+        elif row == 4 and collum >= 8 and collum <= 9:
+            width = 44
+        else:
+            width = 20
+            
+        if btn.value() == 0:
+            if selected == 'enter':
+                return typed
+                break
+            else:
+                if upper == False:
+                    selected = letters[row * 10 + collum]
+                    typed = typed + selected
+                else:
+                    selected = lettersupper[row * 10 + collum]
+                    typed = typed + selected
+                    upper = False
+        if row == 4 and collum == 8:
+            selected = 'enter'
+        elif row == 4 and collum == 0:
+            selected = ''
+            upper = True
+
+        display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
+
 def waitscreensaver():
     timepassed=0
-    if timepassed >= 400:
-        screensaver()
-        timepassed=0
-        
-    if (xa.read() > maxval):
-        timepassed=0
+    while True:
+        if timepassed >= 400:
+            screensaver()
+            timepassed=0
+            
+        if (xa.read() > maxval):
+            timepassed=0
 
-    if (xa.read() < minval):
-        timepassed=0
-        
-    if (btn.value() == 0):
-        timepassed=0
+        if (xa.read() < minval):
+            timepassed=0
+            
+        if (btn.value() == 0):
+            timepassed=0
 
-    timepassed += 1
-
-
-upamount = 40
-
-espcolor = st7789.BLUE
-spi = machine.SPI(1, baudrate=40000000, polarity=1)
-display = st7789.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), dc=machine.Pin(26, machine.Pin.OUT), backlight=sc)
-display.init()
-
-import interpreter
+        timepassed += 1
+    timepassed=0
 
 def screensaver():
     cycles=0
     while True:
         if cycles >= 10:
             display.fill(st7789.BLACK)
-            display.text(font, 'Micro OS', random.randint(0,185),random.randint(0,230), st7789.color565(random.getrandbits(8),random.getrandbits(8),random.getrandbits(8)))
+            display.text(font, 'Micro OS', random.randint(0,170),random.randint(0,230), st7789.color565(random.getrandbits(8),random.getrandbits(8),random.getrandbits(8)))
             cycles=0
 #        display.fill_rect(random.randint(0,200), random.randint(0,200), random.randint(0,200),random.randint(0,200))
         if xa.read() >= maxval or xa.read() <= minval or ya.read() >= maxval or ya.read() <= minval or btn.value() == 0:
@@ -152,63 +337,88 @@ def redrawcanvas():
     over = 1
     cycles = 0
 
-def redrawsettings():
-    display.fill(st7789.BLACK)
+def appstorecheck():
+    display.fill(0)
+    if sta_if.isconnected():
+        appstore()
+    else:
+        display.text(font, 'No WiFi. Exit?', 75, 100)
+        display.text(font, 'OK', 112, 127)
+        display.rect(108, 124, 24, 14, st7789.WHITE)
+        while True:
+            time.sleep(0.25)
+            if not btn.value():
+                break
+
+def split_string(s, n):
+    return [s[i:i+n] for i in range(0, len(s), n)]
+
+def appstore():
+    apps = []
+    links = []
+    display.fill(0)
     
-    display.text(font, '           Settings', 0, 1)
+    display.text(font, 'App Store', 75, 1)
     
-    display.text(font, 'WiFi Stat:  '+netstat, 2, 20)
-    display.text(font, 'WiFi Name:  '+ssid, 2, 35)
-    display.text(font, 'WiFi Pass:  '+passwd, 2, 50)
-    display.text(font, 'OS Info  >', 2, 65)
-    display.text(font, 'Shut Down', 2, 80)
-    
-    selectedsetting = 0
-    
+    r=requests.get('https://raw.githubusercontent.com/asherevan/microOS-apps/master/index.txt')
+    file=open('apps.txt', 'w')
+    file.write(r.text)
+    file.close()
+
+    with open('apps.txt') as file:
+        for line in file:
+            line = line.rstrip('\n')
+            apps.append(line.split(':')[0])
+            links.append(line.split(':')[1])
+
+    line = 0
+    selected = 0
+    for i in apps:
+        display.text(font, i, 2, 12+10*line)
+        line += 1
+
     while True:
         time.sleep(0.15)
-        if selectedsetting > 5:
-            updatesettings()
-            selectedsetting = 0
-        if xa.read() < minval:
-            settingsfile = 'netname:'+ssid+'\nnetpass:'+passwd+'\nnetstat:'+netstat+'\nOSversion:'+osversion
-            file = open('systemsettings.txt', 'w')
-            file.write(settingsfile)
-            file.close()
-            break
-        if ya.read() > maxval:
-            selectedsetting +=1
-            updatesettings()
-        if ya.read() < minval:
-            selectedsetting -=1
-            updatesettings()
-        if btn.value() == 0:
-            if selectedsetting == 0:
-                if netstat == 'off':
-                    exec("netstat = 'on'")
-                    do_connect(ssid, passwd)
-                    display.text(font, 'WiFi Stat:  '+netstat+' ', 2, 20)
-                elif netstat == 'on':
-                    exec("netstat = 'off'")
-                    sta_if.disconnect()
-                    sta_if.active(False)
-                    display.text(font, 'WiFi Stat:  '+netstat, 2, 20)
-            if selectedsetting == 3:
-                display.fill(st7789.BLACK)
-                display.text(font, '           OS Info', 2, 2) 
-                display.text(font, 'OS Version: '+osversion, 2, 20)
-                display.text(font, 'Platform: '+sys.platform, 2, 35)
-                #display.text(font, 'Firmware Version:'+str(sys.version), 2, 50)
-                while True:
-                    time.sleep(0.15)
-                    if xa.read() <= minval:
-                        break
-                redrawsettings()
-            if selectedsetting == 4:
-                sc.off()
-                sys.exit()
+        display.rect(1, 11+10*selected, 238, 10, st7789.BLACK)
 
-        display.rect(1, 19+(selectedsetting*15), 238, 12, st7789.WHITE)
+        if xa.read() <= minval:
+            break
+        if ya.read() >= maxval:
+            selected += 1
+        if ya.read() <= minval:
+            selected -= 1
+        if selected < 0:
+            selected = line-1
+        if selected > line-1:
+            selected = 0
+
+        if btn.value() == 0:
+            display.fill(0)
+            display.text(font, apps[selected], 75, 1)
+            r=requests.get('https://raw.githubusercontent.com/asherevan/microOS-apps/master/'+apps[selected]+'/details.txt')
+            results=r.text
+            line = 0
+            for i in split_string(results, 30):
+                display.text(font, i, 2, 12+10*line)
+                line +=1
+
+            display.rect(20, 217, 200, 12, st7789.WHITE)
+            if not apps[selected] in os.listdir():
+                display.text(font, 'INSTALL', 85, 218)
+            else:
+                display.text(font, 'REMOVE', 90, 218)
+            while True:
+                time.sleep(0.15)
+                if xa.read() <= minval:
+                    break
+                if btn.value() == 0:
+                    r=requests.get('https://raw.githubusercontent.com/asherevan/microOS-apps/master/'+apps[selected]+'/main.py')
+                    file=open('/apps/'+apps[selected]+'/main.py', 'w')
+                    file.write(r.text)
+                    file.close()
+            appstore()
+
+        display.rect(1, 11+10*selected, 238, 10, st7789.RED)
 
 def updatesettings():
     for i in range(0, 24):
@@ -227,49 +437,70 @@ def settings():
     
     selectedsetting = 0
     
+    timepassed=0
+    
     while True:
         time.sleep(0.15)
         if selectedsetting > 5:
+            timepassed=0
             updatesettings()
             selectedsetting = 0
         if xa.read() < minval:
+            timepassed=0
             settingsfile = 'netname:'+ssid+'\nnetpass:'+passwd+'\nnetstat:'+netstat+'\nOSversion:'+osversion
             file = open('systemsettings.txt', 'w')
             file.write(settingsfile)
             file.close()
+            updatesettings()
             break
         if ya.read() > maxval:
+            timepassed=0
             selectedsetting +=1
             updatesettings()
         if ya.read() < minval:
+            timepassed=0
             selectedsetting -=1
             updatesettings()
         if btn.value() == 0:
+            timepassed=0
             if selectedsetting == 0:
                 if netstat == 'off':
                     exec("netstat = 'on'")
-                    asyncio.create_task(do_connect(ssid, passwd))
-                    display.text(font, 'WiFi Stat:  '+netstat, 2, 20)
+                    do_connect(ssid, passwd)
+                    display.text(font, 'WiFi Stat:  '+netstat+'  ', 2, 20)
                 elif netstat == 'on':
                     exec("netstat = 'off'")
                     sta_if.disconnect()
                     sta_if.active(False)
                     display.text(font, 'WiFi Stat:  '+netstat, 2, 20)
+            if selectedsetting == 1:
+                exec('ssid = keyboard()')
+                settings()
+            if selectedsetting == 2:
+                exec('passwd = keyboard()')
+                settings()
             if selectedsetting == 3:
                 display.fill(st7789.BLACK)
                 display.text(font, '           OS Info', 2, 2) 
                 display.text(font, 'OS Version: '+osversion, 2, 20)
                 display.text(font, 'Platform: '+sys.platform, 2, 35)
+                display.text(font, 'IP Address: '+sta_if.ifconfig()[0], 2, 50)
                 while True:
                     time.sleep(0.15)
                     if xa.read() <= minval:
                         break
-                redrawsettings()
+                settings()
             if selectedsetting == 4:
                 sc.off()
                 sys.exit()
 
         display.rect(1, 19+(selectedsetting*15), 238, 12, st7789.WHITE)
+                
+        if timepassed >= 400:
+            screensaver()
+            timepassed=0
+
+        #timepassed += 1
 
 def updateapps():
     for i in range(1, 24):
@@ -297,7 +528,7 @@ def app_menu():
             selectedapp = appamount - 1
             
         if btn.value() == 0:
-            interpreter.interpret(apps[selectedapp])
+            interpreter.interpret('/apps/'+apps[selectedapp]+'/main.py')
 
         if ya.read() < minval:
             print(selectedapp)
@@ -448,7 +679,8 @@ while True:
             settings()
             redrawcanvas()
         if over == 3:
-            print('app store')
+            appstorecheck()
+            redrawcanvas()
  
     if (over>3):
         over=1
