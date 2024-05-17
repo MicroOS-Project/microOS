@@ -8,9 +8,7 @@ If you want it to run at boot put this into your boot.py file.
    import system.microOS
    ```
 
-TODO:
-
-Fix menu bug so that first app menu option stays shown (please fix)
+<h3>TODO:</h3>
 
 Add documentation.
 
