@@ -36,4 +36,4 @@ display = st7789.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), d
 display.init()
 
 if btn.value() == 0:
-    exec(open('microOS.py', 'r').read())
+    execfile('microOS.py')
