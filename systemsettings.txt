@@ -1,4 +1,4 @@
 netname:Fort Asher Bravo
 netpass:Shepherd
-netstat:on
-OSversion:0.15.0a
+netstat:off
+OSversion:0.15.2a

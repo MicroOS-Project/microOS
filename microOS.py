@@ -1,42 +1,10 @@
 # MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
-import os
-os.chdir('/system')
-import machine
-import time
-import st7789
-from sound import playsound
-import network
-from micropython import const
-import sys
-import random
-import vga1_8x8 as font
-import urequests as requests
-#import _thread as thread
-
-sta_if = network.WLAN(network.STA_IF)
-
-xa = machine.ADC(machine.Pin(36))
-ya = machine.ADC(machine.Pin(39))
-btn = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
-sc = machine.Pin(22, machine.Pin.OUT)
-
-sc.on()
-
-xa.atten(xa.ATTN_11DB)
-ya.atten(ya.ATTN_11DB)
-
-minval = const(500)
-maxval = const(2500)
-
-upamount = 40
-
-espcolor = st7789.BLUE
-spi = machine.SPI(1, baudrate=40000000, polarity=1)
-display = st7789.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), dc=machine.Pin(26, machine.Pin.OUT), backlight=sc)
-display.init()
 
 ssid = ''
 passwd = ''
+
+letters = ('1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','[',']','\\',';','',"'",',',' ',' ',' ','/','.',' ',' ')
+lettersupper = ('!','@','#','$','%','^','&','*','(',')','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','{','}','|',':','','"','<',' ',' ',' ','?','>',' ',' ')
 
 import interpreter
 
@@ -49,12 +17,42 @@ def do_connect(name, password):
             pass
     print('network config:', sta_if.ifconfig())
 
+def redrawletters():
+    letter=0
+    for i in range(0,5):
+        for n in range(0,10):
+            display.text(font, letters[letter], 7+n*24, 153+i*17, st7789.YELLOW)
+            letter += 1
+    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
+    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
+
+    display.rect(74, 218, 68, 15, st7789.WHITE)
+    display.rect(194, 218, 44, 15, st7789.WHITE)
+
+    display.text(font, 'UP', 5, 222, st7789.YELLOW)
+    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
+    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
+
+def redrawlettersupper():
+    letter=0
+    for i in range(0,5):
+        for n in range(0,10):
+            display.text(font, lettersupper[letter], 7+n*24, 153+i*17, st7789.YELLOW)
+            letter += 1
+    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
+    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
+
+    display.rect(74, 218, 68, 15, st7789.WHITE)
+    display.rect(194, 218, 44, 15, st7789.WHITE)
+
+    display.text(font, 'UP', 5, 222, st7789.YELLOW)
+    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
+    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
+
 def keyboard(pretyped=''):
     display.fill(0)
     typed = pretyped
     selected = ''
-    letters = ('1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','[',']','\\',';','',"'",',',' ',' ',' ','/','.',' ',' ')
-    lettersupper = ('!','@','#','$','%','^','&','*','(',')','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','{','}','|',':','','"','<',' ',' ',' ','?','>',' ',' ')
     letter = 0
 
     row = 0
@@ -70,20 +68,7 @@ def keyboard(pretyped=''):
 
     updatekeyboard()
 
-    for i in range(0,5):
-        for n in range(0,10):
-            display.text(font, letters[letter], 7+n*24, 153+i*17, st7789.YELLOW)
-            letter += 1
-
-    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
-    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
-
-    display.rect(74, 218, 68, 15, st7789.WHITE)
-    display.rect(194, 218, 44, 15, st7789.WHITE)
-
-    display.text(font, 'UP', 5, 222, st7789.YELLOW)
-    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
-    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
+    redrawletters()
 
     display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
 
@@ -132,21 +117,20 @@ def keyboard(pretyped=''):
                     selected = lettersupper[row * 10 + collum]
                     typed = typed + selected
                     upper = False
+                    redrawletters()
         if row == 4 and collum == 8:
             selected = 'enter'
         elif row == 4 and collum == 0:
             selected = ''
             upper = True
+            redrawlettersupper()
 
         display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
         
 def unubstructingkeyboard(pretyped=''):
     typed = pretyped
     selected = ''
-    letters = ('1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','[',']','\\',';','',"'",',',' ',' ',' ','/','.',' ',' ')
-    lettersupper = ('!','@','#','$','%','^','&','*','(',')','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','{','}','|',':','','"','<',' ',' ',' ','?','>',' ',' ')
     letter = 0
-
     row = 0
     collum = 0
     width = 20
@@ -159,21 +143,8 @@ def unubstructingkeyboard(pretyped=''):
                 display.rect(2+n*24, 150+i*17, 20, 15, st7789.WHITE)
 
     updatekeyboard()
-
-    for i in range(0,5):
-        for n in range(0,10):
-            display.text(font, letters[letter], 7+n*24, 153+i*17, st7789.YELLOW)
-            letter += 1
-
-    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
-    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
-
-    display.rect(74, 218, 68, 15, st7789.WHITE)
-    display.rect(194, 218, 44, 15, st7789.WHITE)
-
-    display.text(font, 'UP', 5, 222, st7789.YELLOW)
-    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
-    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
+    
+    redrawletters()
 
     display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
 
@@ -222,39 +193,22 @@ def unubstructingkeyboard(pretyped=''):
                     selected = lettersupper[row * 10 + collum]
                     typed = typed + selected
                     upper = False
+                    redrawletters()
         if row == 4 and collum == 8:
             selected = 'enter'
         elif row == 4 and collum == 0:
             selected = ''
             upper = True
+            redrawlettersupper()
 
         display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
-
-def waitscreensaver():
-    timepassed=0
-    while True:
-        if timepassed >= 400:
-            screensaver()
-            timepassed=0
-            
-        if (xa.read() > maxval):
-            timepassed=0
-
-        if (xa.read() < minval):
-            timepassed=0
-            
-        if (btn.value() == 0):
-            timepassed=0
-
-        timepassed += 1
-    timepassed=0
 
 def screensaver():
     cycles=0
     while True:
         if cycles >= 10:
             display.fill(st7789.BLACK)
-            display.text(font, 'Micro OS', random.randint(0,170),random.randint(0,230), st7789.color565(random.getrandbits(8),random.getrandbits(8),random.getrandbits(8)))
+            display.text(fontlarge, 'Micro OS', random.randint(10,110),random.randint(10,230), st7789.color565(random.getrandbits(8),random.getrandbits(8),random.getrandbits(8)))
             cycles=0
 #        display.fill_rect(random.randint(0,200), random.randint(0,200), random.randint(0,200),random.randint(0,200))
         if xa.read() >= maxval or xa.read() <= minval or ya.read() >= maxval or ya.read() <= minval or btn.value() == 0:
@@ -441,17 +395,12 @@ def settings():
     
     while True:
         time.sleep(0.15)
-        if selectedsetting > 5:
-            timepassed=0
-            updatesettings()
-            selectedsetting = 0
         if xa.read() < minval:
             timepassed=0
             settingsfile = 'netname:'+ssid+'\nnetpass:'+passwd+'\nnetstat:'+netstat+'\nOSversion:'+osversion
             file = open('systemsettings.txt', 'w')
             file.write(settingsfile)
             file.close()
-            updatesettings()
             break
         if ya.read() > maxval:
             timepassed=0
@@ -494,6 +443,15 @@ def settings():
                 sc.off()
                 sys.exit()
 
+        if selectedsetting < 0:
+            timepassed=0
+            selectedsetting = 5
+            
+        if selectedsetting > 5:
+            timepassed=0
+            selectedsetting = 0
+
+
         display.rect(1, 19+(selectedsetting*15), 238, 12, st7789.WHITE)
                 
         if timepassed >= 400:
@@ -503,7 +461,7 @@ def settings():
         #timepassed += 1
 
 def updateapps():
-    for i in range(1, 24):
+    for i in range(0, 24):
         display.rect(5, 10*i, 230, 10, st7789.BLACK)
 
 def app_menu():
@@ -518,17 +476,17 @@ def app_menu():
         apps.append(i)
         display.text(font, i, 10, 10*appamount)
         appamount += 1
-        print(apps)
+    
+    print(appamount)
 
     updateapps()
+    
     while True:
-        if selectedapp >= appamount-1:
-            selectedapp = -1
-        if selectedapp < -1:
-            selectedapp = appamount - 1
-            
+        time.sleep(0.15)
+        
         if btn.value() == 0:
             interpreter.interpret('/apps/'+apps[selectedapp]+'/main.py')
+            app_menu()
 
         if ya.read() < minval:
             print(selectedapp)
@@ -539,23 +497,22 @@ def app_menu():
             print(selectedapp)
             updateapps()
             selectedapp += 1
+
         if xa.read() < minval:
             break
-            
+
+        if selectedapp >= appamount:
+            updateapps()
+            selectedapp = 0
+        if selectedapp < 0:
+            updateapps()
+            selectedapp = appamount-1
+
         display.rect(5, 10 * selectedapp, 230, 10, st7789.RED)
-
-        time.sleep(0.15)
         
-    display.fill(st7789.WHITE)
-    display.fill_rect(11, 170, 60, 60, st7789.BLACK)
-    display.text(font, '  Apps', 10, 225, st7789.BLACK, st7789.WHITE)
-    display.line(0, 165, 240, 165, st7789.BLACK)
-    display.rect(9+selected*70, 168, 64, 68, espcolor)
-
-
-display.fill_rect(0, 0, 240, 240, st7789.BLACK)
-
-
+        
+#actualy start booting
+        
 display.fill_rect(0, 0, 240, 240, st7789.BLACK)
 
 display.fill_rect(15, 80-upamount, 215, 70, st7789.WHITE)
@@ -647,6 +604,8 @@ display.text(font, str(hour)+':'+str(curtime[4]),100,0)
 
 cycles = 0
 timepassed = 0
+
+os.chdir('/')
 
 while True:
     time.sleep(0.15)
