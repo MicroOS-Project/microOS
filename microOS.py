@@ -1,5 +1,7 @@
 # MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
 
+sta_if = network.WLAN(network.STA_IF)
+
 ssid = ''
 passwd = ''
 
@@ -14,7 +16,9 @@ def do_connect(name, password):
         sta_if.active(True)
         sta_if.connect(name, password)
         while not sta_if.isconnected():
-            pass
+            if xa.read() <= minval:
+                exec('netstat = "off"')
+                break
     print('network config:', sta_if.ifconfig())
 
 def redrawletters():
@@ -415,8 +419,11 @@ def settings():
             if selectedsetting == 0:
                 if netstat == 'off':
                     exec("netstat = 'on'")
+                    display.fill(0)
+                    display.text(font, 'Connecting to network:', 10, 100)
+                    display.text(font, ssid, 10, 115)
                     do_connect(ssid, passwd)
-                    display.text(font, 'WiFi Stat:  '+netstat+'  ', 2, 20)
+                    settings()
                 elif netstat == 'on':
                     exec("netstat = 'off'")
                     sta_if.disconnect()
