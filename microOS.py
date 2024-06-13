@@ -1,5 +1,7 @@
 # MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
 
+os.chdir('/system')
+
 sta_if = network.WLAN(network.STA_IF)
 
 ssid = ''
@@ -8,7 +10,7 @@ passwd = ''
 letters = ('1','2','3','4','5','6','7','8','9','0','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','[',']','\\',';','',"'",',',' ',' ',' ','/','.',' ',' ')
 lettersupper = ('!','@','#','$','%','^','&','*','(',')','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','{','}','|',':','','"','<',' ',' ',' ','?','>',' ',' ')
 
-import interpreter
+nums = ['1','2','3','4','5','6','7','8','9','0','.','-','+','','/','*','=','C']
 
 def do_connect(name, password):
     if not sta_if.isconnected():
@@ -20,6 +22,60 @@ def do_connect(name, password):
                 exec('netstat = "off"')
                 break
     print('network config:', sta_if.ifconfig())
+
+def numpad(textx=25, texty=10):
+    def redraw():
+        num = 0
+        for i in range(0, 3):
+            for n in range(0, 6):
+                display.text(fontlarge, nums[num], 13+40*n, 130+34*i)
+                num +=1
+        for i in range(0, 3):
+            for n in range(0, 6):
+                display.rect(3+40*n, 130+34*i, 34, 30, st7789.BLUE)
+
+    redraw()
+
+    row = 0
+    collum = 0
+
+    entered = ''
+
+    while True:
+        time.sleep(0.25)
+        display.rect(3+40*collum, 130+34*row, 34, 30, st7789.BLUE)
+        if btn.value() == 0:
+            if nums[row*6+collum] == '=':
+                return entered
+            elif nums[row*6+collum] == 'C':
+                entered = ''
+                display.fill_rect(11, texty, 220, 32, st7789.BLACK)
+                display.text(fontlarge, entered, textx, texty, st7789.BLUE)
+                print(entered)
+            else:
+                entered += nums[row*6+collum]
+                display.fill_rect(11, texty, 220, 32, st7789.BLACK)
+                display.text(fontlarge, entered, textx, texty, st7789.BLUE)
+
+        if xa.read() < minval:
+            collum -= 1
+        if xa.read() > maxval:
+            collum += 1
+        if ya.read() < minval:
+            row -= 1
+        if ya.read() > maxval:
+            row += 1
+
+        if row > 2:
+            row = 2
+        if row < 0:
+            row = 0
+        if collum > 5:
+            collum = 5
+        if collum < 0:
+            collum = 0
+
+        display.rect(3+40*collum, 130+34*row, 34, 30, st7789.BLACK)
 
 def redrawletters():
     letter=0
@@ -492,7 +548,7 @@ def app_menu():
         time.sleep(0.15)
         
         if btn.value() == 0:
-            interpreter.interpret('/apps/'+apps[selectedapp]+'/main.py')
+            execfile('/apps/'+apps[selectedapp]+'/main.py')
             app_menu()
 
         if ya.read() < minval:
