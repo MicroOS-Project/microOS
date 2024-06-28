@@ -13,8 +13,6 @@ import vga1_bold_16x32 as fontlarge
 import urequests as requests
 import _thread as thread
 
-sta_if = network.WLAN(network.STA_IF)
-
 xa = machine.ADC(machine.Pin(36))
 ya = machine.ADC(machine.Pin(39))
 btn = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
@@ -35,5 +33,14 @@ spi = machine.SPI(1, baudrate=40000000, polarity=1)
 display = st7789.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), dc=machine.Pin(26, machine.Pin.OUT), backlight=sc)
 display.init()
 
+os.chdir('/')
+
+try:
+    os.rmdir('/tmp')
+except:
+    print('The /tmp directory does not exist. Creating.')
+
+os.mkdir('/tmp')
+
 if btn.value() == 0:
-    execfile('microOS.py')
+    execfile('/system/microOS.py')

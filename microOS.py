@@ -19,6 +19,7 @@ def do_connect(name, password):
         sta_if.connect(name, password)
         while not sta_if.isconnected():
             if xa.read() <= minval:
+                sta_if.active(False)
                 exec('netstat = "off"')
                 break
     print('network config:', sta_if.ifconfig())
