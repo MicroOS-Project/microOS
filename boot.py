@@ -35,12 +35,5 @@ display.init()
 
 os.chdir('/')
 
-try:
-    os.rmdir('/tmp')
-except:
-    print('The /tmp directory does not exist. Creating.')
-
-os.mkdir('/tmp')
-
 if btn.value() == 0:
     execfile('/system/microOS.py')
