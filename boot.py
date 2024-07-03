@@ -35,5 +35,7 @@ display.init()
 
 os.chdir('/')
 
+execfile('apprefresh.py')
+
 if btn.value() == 0:
     execfile('/system/microOS.py')
