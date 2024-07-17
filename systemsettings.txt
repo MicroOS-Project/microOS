@@ -1,4 +1,4 @@
 netname:
 netpass:
 netstat:off
-OSversion:0.16.0a
+OSversion:0.17.0a

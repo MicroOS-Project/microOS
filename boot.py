@@ -13,6 +13,8 @@ import vga1_bold_16x32 as fontlarge
 import urequests as requests
 import _thread as thread
 
+execfile('appRefresh.py')
+
 xa = machine.ADC(machine.Pin(36))
 ya = machine.ADC(machine.Pin(39))
 btn = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
@@ -34,8 +36,6 @@ display = st7789.ST7789(spi, 240, 240, reset=machine.Pin(27, machine.Pin.OUT), d
 display.init()
 
 os.chdir('/')
-
-execfile('apprefresh.py')
 
 if btn.value() == 0:
     execfile('/system/microOS.py')
