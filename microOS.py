@@ -17,9 +17,8 @@ links=[]
 
 def do_connect(name, password):
     if not sta_if.isconnected():
-        print('connecting to network...')
+        print('Connecting to network...')
         sta_if.active(True)
-        sta_if.connect(name, password)
         while not sta_if.isconnected():
             if xa.read() <= minval:
                 sta_if.active(False)
@@ -114,17 +113,17 @@ def settings():
                 
         if timepassed >= 400:
             screensaver()
+            break
             timepassed=0
 
         timepassed += 1        
         
 #actualy start booting
-        
-display.fill_rect(0, 0, 240, 240, st7789.BLACK)
+
+display.fill(0)
 
 microoswords()
 
-newval = ''
 netstat = ''
 
 with open('systemsettings.txt') as file:
@@ -227,3 +226,7 @@ while True:
         
     cycles += 1
     timepassed += 1
+    
+#erase /tmp dir so it's ready for the next run
+for filename in os.listdir('/tmp'):
+    os.remove(filename)
