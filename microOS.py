@@ -19,6 +19,7 @@ def do_connect(name, password):
     if not sta_if.isconnected():
         print('Connecting to network...')
         sta_if.active(True)
+        sta_if.connect(name, password)
         while not sta_if.isconnected():
             if xa.read() <= minval:
                 sta_if.active(False)
@@ -42,7 +43,9 @@ def settings():
     display.text(font, 'WiFi Pass:  '+passwd, 2, 50)
     display.text(font, 'OS Info  >', 2, 65)
     display.text(font, 'Shut Down', 2, 80)
-    
+    if sta_if.isconnected():
+        display.text(font, 'Check For Updates', 2, 95)
+
     selectedsetting = 0
     
     timepassed=0
@@ -125,6 +128,8 @@ display.fill(0)
 microoswords()
 
 netstat = ''
+
+#retrieve settings
 
 with open('systemsettings.txt') as file:
     for line in file:
