@@ -2,6 +2,8 @@ Our attempt at creating an operating system like program for ESP32.
 
 You will need to upload [this](https://github.com/russhughes/st7789_mpy) firmware to your device in order for it to work.
 
+If someone would like to create a circut diagram for this, contact me and I'll give you all the details.
+
 <h3>TODO:</h3>
 
 ADD DOCUMENTATION.
