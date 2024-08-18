@@ -13,4 +13,4 @@ Make the screensaver appear in all pages.
 
 Fix settings menu bug after you go into the OS info menu and exit then exit again.
 
-If someone would like to create a circut diagram for this, contact me and I'll give you all the details.
+If someone would like to create a circut diagram for this, please do! If you do, just submit a pull request.
