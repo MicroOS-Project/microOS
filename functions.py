@@ -2,41 +2,41 @@ def microoswords():
     display.fill_rect(15, 80-upamount, 215, 70, st7789.WHITE)
     display.fill_rect(70, 150-upamount, 100, 70, st7789.YELLOW)
     # M
-    display.line(20, 140-upamount, 30, 90-upamount, espcolor)
-    display.line(30, 90-upamount, 40, 140-upamount, espcolor)
-    display.line(40, 140-upamount, 50, 90-upamount, espcolor)
-    display.line(50, 90-upamount, 60, 140-upamount, espcolor)
+    display.line(20, 140-upamount, 30, 90-upamount, st7789.BLUE)
+    display.line(30, 90-upamount, 40, 140-upamount, st7789.BLUE)
+    display.line(40, 140-upamount, 50, 90-upamount, st7789.BLUE)
+    display.line(50, 90-upamount, 60, 140-upamount, st7789.BLUE)
 
     # I
-    display.line(70, 90-upamount, 100, 90-upamount, espcolor)
-    display.line(85, 90-upamount, 85, 140-upamount, espcolor)
-    display.line(70, 140-upamount, 100, 140-upamount, espcolor)
+    display.line(70, 90-upamount, 100, 90-upamount, st7789.BLUE)
+    display.line(85, 90-upamount, 85, 140-upamount, st7789.BLUE)
+    display.line(70, 140-upamount, 100, 140-upamount, st7789.BLUE)
 
     # C
-    display.line(110, 90-upamount, 140, 90-upamount, espcolor)
-    display.line(110, 90-upamount, 110, 140-upamount, espcolor)
-    display.line(110, 140-upamount, 140, 140-upamount, espcolor)
+    display.line(110, 90-upamount, 140, 90-upamount, st7789.BLUE)
+    display.line(110, 90-upamount, 110, 140-upamount, st7789.BLUE)
+    display.line(110, 140-upamount, 140, 140-upamount, st7789.BLUE)
 
 
     # R
-    display.line(150, 90-upamount, 150, 140-upamount, espcolor)
-    display.rect(150, 90-upamount, 25, 25, espcolor)
-    display.line(150, 115-upamount, 175, 140-upamount, espcolor)
+    display.line(150, 90-upamount, 150, 140-upamount, st7789.BLUE)
+    display.rect(150, 90-upamount, 25, 25, st7789.BLUE)
+    display.line(150, 115-upamount, 175, 140-upamount, st7789.BLUE)
 
     # O
-    display.rect(190, 90-upamount, 30, 50, espcolor)
-    display.rect(191, 91-upamount, 28, 48, espcolor)
+    display.rect(190, 90-upamount, 30, 50, st7789.BLUE)
+    display.rect(191, 91-upamount, 28, 48, st7789.BLUE)
 
     # O
-    display.rect(80, 160-upamount, 30, 50, espcolor)
-    display.rect(81, 161-upamount, 28, 48, espcolor)
+    display.rect(80, 160-upamount, 30, 50, st7789.BLUE)
+    display.rect(81, 161-upamount, 28, 48, st7789.BLUE)
 
     # S
-    display.line(105+20, 90+70-upamount, 135+20, 90+70-upamount, espcolor)
-    display.line(105+20, 90+70-upamount, 105+20, 115+70-upamount, espcolor)
-    display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, espcolor)
-    display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, espcolor)
-    display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, espcolor)
+    display.line(105+20, 90+70-upamount, 135+20, 90+70-upamount, st7789.BLUE)
+    display.line(105+20, 90+70-upamount, 105+20, 115+70-upamount, st7789.BLUE)
+    display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, st7789.BLUE)
+    display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, st7789.BLUE)
+    display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, st7789.BLUE)
 
 
 def numpad(textx=25, texty=10):
@@ -354,12 +354,25 @@ def appstore():
     display.fill(0)
     
     display.text(font, 'App Store', 75, 1)
-
-    with open('/system/apps.txt') as file:
-        for line in file:
-            line = line.rstrip('\n')
-            apps.append(line.split(':')[0])
-            links.append(line.split(':')[1])
+    
+    try:
+        with open('/system/apps.txt') as file:
+            for line in file:
+                line = line.rstrip('\n')
+                apps.append(line.split(';')[0])
+                links.append(line.split(';')[1])
+    except:
+        r=requests.get('https://raw.githubusercontent.com/asherevan/microOS-apps/master/index.txt')
+        file=open('/system/apps.txt', 'w')
+        file.write(r.text)
+        file.close()
+        with open('/system/apps.txt') as file:
+            for line in file:
+                line = line.rstrip('\n')
+                apps.append(line.split(';')[0])
+                links.append(line.split(';')[1])
+    print(apps)
+    print(links)
 
     line = 0
     selected = 0
@@ -387,12 +400,12 @@ def appstore():
         if btn.value() == 0:
             display.fill(0)
             display.text(font, apps[selected], 75, 1)
-            r=requests.get('https://raw.githubusercontent.com/asherevan/microOS-apps/master/'+apps[selected]+'/details.txt')
+            r=requests.get(links[selected]+'details.txt')
             results=r.text
             line = 0
             for i in split_string(results, 30):
                 display.text(font, i, 2, 12+10*line)
-                line +=1
+                line += 1
 
             display.rect(20, 217, 200, 12, st7789.WHITE)
             if not apps[selected] in os.listdir('/apps'):
@@ -406,11 +419,20 @@ def appstore():
                 if btn.value() == 0:
                     if not apps[selected] in os.listdir('/apps'):
                         display.text(font, 'Installing', 80, 218, st7789.BLUE)
-                        r=requests.get('https://raw.githubusercontent.com/asherevan/microOS-apps/master/'+apps[selected]+'/main.py')
                         os.mkdir('/apps/'+apps[selected])
-                        file=open('/apps/'+apps[selected]+'/main.py', 'w')
-                        file.write(r.text)
-                        file.close()
+                        try:
+                            r=requests.get(links[selected]+'files.txt').text
+                            files=r.split('\n')
+                            for i in files:
+                                r = requests.get(links[selected]+i).text
+                                file=open('/apps/'+apps[selected]+'/'+i, 'w')
+                                file.write(r)
+                                file.close()
+                        except:
+                            r = requests.get(links[selected]+'main.py').text
+                            file=open('/apps/'+apps[selected]+'/main.py', 'w')
+                            file.write(r)
+                            file.close()
                         appstore()
                     else:
                         for i in os.listdir('/apps/'+apps[selected]):
@@ -432,8 +454,8 @@ def appsrefresh():
     with open('/system/apps.txt') as file:
         for line in file:
             line = line.rstrip('\n')
-            apps.append(line.split(':')[0])
-            links.append(line.split(':')[1])
+            apps.append(line.split(';')[0])
+            links.append(line.split(';')[1])
 
 
 def updateapps():
