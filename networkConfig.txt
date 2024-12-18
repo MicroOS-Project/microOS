@@ -1,0 +1,3 @@
+stat:off
+name:NETWORK_NAME
+pass:PASSWORD

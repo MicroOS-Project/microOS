@@ -1,4 +1,6 @@
-# MicroOS A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
+# Micro OS
+
+# A PROJECT TO CREATE AN OPERATING SYSTEM FOR MICROCONTROLLERS
 
 
 
@@ -54,7 +56,7 @@ def do_connect(name, password):
 
         while not sta_if.isconnected():
 
-            if xa.read() <= minval:
+            if left():
 
                 sta_if.active(False)
 
@@ -70,15 +72,15 @@ execfile('functions.py')
 
 
 
-#define settings here because otherwise WiFi would get an error when we try to do anything with it.
+#define settings here because otherwise WiFi would raise an error when we try to do anything with it.
 
 
 
 def updatesettings():
 
-    for i in range(0, 24):
+    for i in range(0, round(height/10, 0)):
 
-        display.rect(1, 19+(15*i), 238, 12, st7789.BLACK)
+        display.rect(1, 19+(15*i), width-2, 12, st7789.BLACK)
 
         
 
@@ -86,9 +88,25 @@ def redrawwifi():
 
     display.fill(0)
 
-    display.text(font, '           Network', 0, 1)
+    display.text(font, 'Network', 92, 1)
 
-    display.text(font, 'SSID     '+ssid+'  >', 2, 20)
+    display.text(font, 'Wi-Fi status', 2, 20)
+
+    # Draw the ON/OFF switch
+
+    display.fill_circle(150, 24, 6, st7789.WHITE)
+
+    display.fill_circle(145, 24, 6, st7789.WHITE)
+
+    if netstat == 'on':
+
+        display.fill_circle(150, 24, 5, st7789.BLUE)
+
+    else:
+
+        display.fill_circle(145, 24, 5, st7789.BLUE)
+
+
 
     displaypass=''
 
@@ -136,29 +154,17 @@ def settings():
 
     
 
-    networks=[]
-
-    
-
     while True:
 
         time.sleep(0.15)
 
-        if xa.read() < minval:
+        if left():
 
             timepassed=0
 
-            exec('settingsfile = "netname:"+ssid+"\\nnetpass:"+passwd+"\\nnetstat:"+netstat+"\\nOSversion:"+osversion')
-
-            file = open('/system/systemsettings.txt', 'w')
-
-            file.write(settingsfile)
-
-            file.close()
-
             break
 
-        if ya.read() > maxval:
+        if down():
 
             timepassed=0
 
@@ -166,7 +172,7 @@ def settings():
 
             updatesettings()
 
-        if ya.read() < minval:
+        if up():
 
             timepassed=0
 
@@ -174,11 +180,13 @@ def settings():
 
             updatesettings()
 
-        if btn.value() == 0:
+        if pressed():
 
             timepassed=0
 
             if selectedsetting == 0:
+
+                # WiFi Menu
 
                 redrawwifi()
 
@@ -186,23 +194,23 @@ def settings():
 
                     time.sleep(0.15)
 
-                    if xa.read() <= minval:
+                    if left():
 
                         break
 
-                    if ya.read() >= maxval:
+                    if down():
 
                         selectedsetting += 1
 
                         updatesettings()
 
-                    if ya.read() <= minval:
+                    if up():
 
                         selectedsetting -= 1
 
                         updatesettings()
 
-                    if btn.value() == 0:
+                    if pressed():
 
                         if selectedsetting == 0:
 
@@ -212,11 +220,9 @@ def settings():
 
                             sta_if.active(True)
 
-                            display.text(font, 'Scanning...', 76, 115)
+                            display.text(font, 'Scanning...', round(width/2-44), round(height/2-4))
 
                             nets=sta_if.scan()
-
-                            print(nets)
 
                             netsammount=0
 
@@ -230,63 +236,61 @@ def settings():
 
                                     display.text(font, i[0], 2, netlistdown)
 
-                                    print(i[0].decode('utf-8'))
+                                    networks.append(i[0].decode('utf-8'))
 
-                                    networks += i[0].decode('utf-8')
-
-                                    netlistdown+=15
+                                    netlistdown+=12
 
                                     netsammount += 1
 
                             print(networks)
 
-                            sta_if.active(False)
-
                             if netsammount == 0:
 
-                                display.text(font, 'No Networks Found', 52, 116)
+                                display.text(font, 'No Networks Found', round(width/2-19*8/2), round(height/2-4))
 
                             else:
 
-                                display.rect(1, 1+(selectedsetting*15), 238, 12, st7789.WHITE)
+                                # Select network
+
+                                display.rect(1, 1+(selectedsetting*12), width-2, 12, st7789.WHITE)
 
                                 while True:
 
                                     time.sleep(0.15)
 
-                                    if xa.read() <= minval:
+                                    if left():
 
                                         redrawwifi()
 
                                         break
 
-                                    if ya.read() <= minval:
+                                    if up():
 
                                         selectedsetting-=1
 
                                         updatesettings()
 
-                                        display.rect(1, 1+(selectedsetting*15), 238, 12, st7789.WHITE)
+                                        display.rect(1, 1+(selectedsetting*12), width-2, 12, st7789.WHITE)
 
-                                    if ya.read() >= maxval:
+                                    if down():
 
                                         selectedsetting+=1
 
                                         updatesettings()
 
-                                        display.rect(1, 1+(selectedsetting*15), 238, 12, st7789.WHITE)
+                                        display.rect(1, 1+(selectedsetting*12), width-2, 12, st7789.WHITE)
 
                                         
 
-                                    if btn.value() == 0:
+                                    if pressed():
 
                                         passwd = keyboard()
 
                                         display.fill(0)
 
-                                        display.text(font, 'Connecting to network:', 32, 116)
+                                        display.text(font, 'Connecting to network:', round(width/2-22*8/2), round(height/2)-4)
 
-                                        display.text(font, networks[selectedsetting], round(240-((len(networks[selectedsetting])/2)*8)), 126)
+                                        display.text(font, networks[selectedsetting], round(width/2-(len(networks[selectedsetting])/2*8)), round(height/2-4+10))
 
                                         exec('ssid = networks[selectedsetting]')
 
@@ -294,11 +298,13 @@ def settings():
 
                                         do_connect(ssid, passwd)
 
+                                        savesettings()
+
                                         redrawwifi()
 
                                         break
 
-                                    
+
 
                                     if selectedsetting < 0:
 
@@ -306,7 +312,7 @@ def settings():
 
                                         updatesettings()
 
-                                        display.rect(1, 1+(selectedsetting*15), 238, 12, st7789.WHITE)
+                                        display.rect(1, 1+(selectedsetting*12), width-2, 12, st7789.WHITE)
 
                                     if selectedsetting > netsammount:
 
@@ -314,49 +320,13 @@ def settings():
 
                                         updatesettings()
 
-                                        display.rect(1, 1+(selectedsetting*15), 238, 12, st7789.WHITE)
+                                        display.rect(1, 1+(selectedsetting*12), width-2, 12, st7789.WHITE)
 
                                     
 
                             selectedsetting=0
 
 
-
-#                 if netstat == 'off':
-
-#                     exec("netstat = ' on'")
-
-#                     display.fill(0)
-
-#                     display.text(font, 'Connecting to network:', 10, 100)
-
-#                     display.text(font, ssid, 10, 115)
-
-#                     do_connect(ssid, passwd)
-
-#                     settings()
-
-#                 elif netstat == 'on':
-
-#                     exec("netstat = 'off'")
-
-#                     sta_if.disconnect()
-
-#                     sta_if.active(False)
-
-#                     display.text(font, 'WiFi Stat:  '+netstat, 2, 20)
-
-#             if selectedsetting == 1:
-
-#                 exec('ssid = keyboard()')
-
-#                 settings()
-
-#             if selectedsetting == 2:
-
-#                 exec('passwd = keyboard()')
-
-#                 settings()
 
                     if selectedsetting < 0:
 
@@ -372,7 +342,7 @@ def settings():
 
                         selectedsetting = 0
 
-                    display.rect(1, 19+(selectedsetting*15), 238, 12, st7789.WHITE)
+                    display.rect(1, 19+(selectedsetting*15), width-2, 12, st7789.WHITE)
 
 
 
@@ -388,13 +358,19 @@ def settings():
 
                 display.text(font, 'Platform: '+sys.platform, 2, 35)
 
-                display.text(font, 'IP Address: '+sta_if.ifconfig()[0], 2, 50)
+                display.text(font, 'Firmware: '+os.uname().release, 2, 50)
+
+                ip = sta_if.ifconfig()[0]
+
+                if ip == '0.0.0.0':
+
+                    display.text(font, 'IP Address: '+ip, 2, 65)
 
                 while True:
 
                     time.sleep(0.15)
 
-                    if xa.read() <= minval:
+                    if left():
 
                         break
 
@@ -432,7 +408,7 @@ def settings():
 
 
 
-        display.rect(1, 19+(selectedsetting*15), 238, 12, st7789.WHITE)
+        display.rect(1, 19+(selectedsetting*15), width-2, 12, st7789.WHITE)
 
                 
 
@@ -446,7 +422,7 @@ def settings():
 
 
 
-        timepassed += 1        
+        timepassed += 1  
 
 
 
@@ -486,25 +462,21 @@ with open('systemsettings.txt') as file:
 
         sn = current_setting[0]
 
-        if sn == 'netname':
+#         if sn == 'netname':
 
-            ssid = sv.split('\r')[0]
+#             ssid = sv.split('\r')[0]
 
-            
+#             
 
-        if sn == 'netpass':
+#         if sn == 'netpass':
 
-            passwd = sv.split('\r')[0]
+#             passwd = sv.split('\r')[0]
 
-            
+#             
 
-        if sn == 'netstat':
+#         if sn == 'netstat':
 
-            if sv == 'on':
-
-                do_connect(ssid, passwd)
-
-            netstat = sv.split('\r')[0]
+#             netstat = sv.split('\r')[0]
 
 
 
@@ -514,9 +486,51 @@ with open('systemsettings.txt') as file:
 
 
 
-display.text(font, 'Version ' + osversion, 65, 10)
+versioncharlen = len('Version '+ osversion)
+
+display.text(font, 'Version ' + osversion, round(width/2-versioncharlen*8/2), 190)
 
 time.sleep(2.5)
+
+
+
+# network settings:
+
+with open('/system/networkConfig.txt') as file:
+
+    for line in file:
+
+        line = line.rstrip('\n')
+
+        currentline = line.split(':', 1)
+
+        ln = currentline[0]
+
+        lv = currentline[1]
+
+        
+
+        if ln == 'stat':
+
+            netstat = lv.strip('\r')
+
+            
+
+        elif ln == 'name':
+
+            ssid = lv.strip('\r')
+
+            
+
+        elif ln == 'pass':
+
+            passwd = lv.strip('\r')
+
+
+
+if netstat == 'on':
+
+    do_connect(ssid, passwd)
 
 
 
@@ -531,10 +545,6 @@ log('Starting main loop')
 # menu:
 
 selected = 0
-
-
-
-upamount = upamount + 20
 
 
 
@@ -604,13 +614,13 @@ while True:
 
         
 
-    if (xa.read() > maxval):
+    if right():
 
         timepassed=0
 
         over+=1
 
-    if (xa.read() < minval):
+    if left():
 
         timepassed=0
 
@@ -618,7 +628,7 @@ while True:
 
         
 
-    if (btn.value() == 0):
+    if pressed():
 
         timepassed=0
 
@@ -688,7 +698,7 @@ while True:
 
 
 
-log('Erasing flash')
+log('Erasing /tmp directory')
 
 #erase /tmp dir so it's ready for the next run
 

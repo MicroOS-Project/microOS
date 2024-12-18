@@ -1,283 +1,42 @@
 def microoswords():
-    display.fill_rect(15, 80-upamount, 215, 70, st7789.WHITE)
-    display.fill_rect(70, 150-upamount, 100, 70, st7789.YELLOW)
+    display.fill_rect(15, 40-20, 215, 70, st7789.WHITE)
+    display.fill_rect(70, 110-20, 100, 70, st7789.YELLOW)
     # M
-    display.line(20, 140-upamount, 30, 90-upamount, st7789.BLUE)
-    display.line(30, 90-upamount, 40, 140-upamount, st7789.BLUE)
-    display.line(40, 140-upamount, 50, 90-upamount, st7789.BLUE)
-    display.line(50, 90-upamount, 60, 140-upamount, st7789.BLUE)
+    display.line(20, 100-20, 30, 50-20, st7789.BLUE)
+    display.line(30, 50-20, 40, 100-20, st7789.BLUE)
+    display.line(40, 100-20, 50, 50-20, st7789.BLUE)
+    display.line(50, 50-20, 60, 100-20, st7789.BLUE)
 
     # I
-    display.line(70, 90-upamount, 100, 90-upamount, st7789.BLUE)
-    display.line(85, 90-upamount, 85, 140-upamount, st7789.BLUE)
-    display.line(70, 140-upamount, 100, 140-upamount, st7789.BLUE)
+    display.line(70, 50-20, 100, 50-20, st7789.BLUE)
+    display.line(85, 50-20, 85, 100-20, st7789.BLUE)
+    display.line(70, 100-20, 100, 100-20, st7789.BLUE)
 
     # C
-    display.line(110, 90-upamount, 140, 90-upamount, st7789.BLUE)
-    display.line(110, 90-upamount, 110, 140-upamount, st7789.BLUE)
-    display.line(110, 140-upamount, 140, 140-upamount, st7789.BLUE)
+    display.line(110, 50-20, 140, 50-20, st7789.BLUE)
+    display.line(110, 50-20, 110, 100-20, st7789.BLUE)
+    display.line(110, 100-20, 140, 100-20, st7789.BLUE)
 
 
     # R
-    display.line(150, 90-upamount, 150, 140-upamount, st7789.BLUE)
-    display.rect(150, 90-upamount, 25, 25, st7789.BLUE)
-    display.line(150, 115-upamount, 175, 140-upamount, st7789.BLUE)
+    display.line(150, 50-20, 150, 100-20, st7789.BLUE)
+    display.rect(150, 50-20, 25, 25, st7789.BLUE)
+    display.line(150, 75-20, 175, 100-20, st7789.BLUE)
 
     # O
-    display.rect(190, 90-upamount, 30, 50, st7789.BLUE)
-    display.rect(191, 91-upamount, 28, 48, st7789.BLUE)
+    display.rect(190, 50-20, 30, 50, st7789.BLUE)
+    display.rect(191, 51-20, 28, 48, st7789.BLUE)
 
     # O
-    display.rect(80, 160-upamount, 30, 50, st7789.BLUE)
-    display.rect(81, 161-upamount, 28, 48, st7789.BLUE)
+    display.rect(80, 120-20, 30, 50, st7789.BLUE)
+    display.rect(81, 121-20, 28, 48, st7789.BLUE)
 
     # S
-    display.line(105+20, 90+70-upamount, 135+20, 90+70-upamount, st7789.BLUE)
-    display.line(105+20, 90+70-upamount, 105+20, 115+70-upamount, st7789.BLUE)
-    display.line(105+20, 115+70-upamount, 135+20, 115+70-upamount, st7789.BLUE)
-    display.line(135+20, 115+70-upamount, 135+20, 140+70-upamount, st7789.BLUE)
-    display.line(135+20, 140+70-upamount, 105+20, 140+70-upamount, st7789.BLUE)
-
-
-def numpad(textx=25, texty=10):
-    def redraw():
-        num = 0
-        for i in range(0, 3):
-            for n in range(0, 6):
-                display.text(fontlarge, nums[num], 13+40*n, 130+34*i)
-                num +=1
-        for i in range(0, 3):
-            for n in range(0, 6):
-                display.rect(3+40*n, 130+34*i, 34, 30, st7789.BLUE)
-
-    redraw()
-
-    row = 0
-    collum = 0
-
-    entered = ''
-
-    while True:
-        time.sleep(0.25)
-        display.rect(3+40*collum, 130+34*row, 34, 30, st7789.BLUE)
-        if btn.value() == 0:
-            if nums[row*6+collum] == '=':
-                return entered
-            elif nums[row*6+collum] == 'C':
-                entered = ''
-                display.fill_rect(11, texty, 220, 32, st7789.BLACK)
-                display.text(fontlarge, entered, textx, texty, st7789.BLUE)
-                print(entered)
-            else:
-                entered += nums[row*6+collum]
-                display.fill_rect(11, texty, 220, 32, st7789.BLACK)
-                display.text(fontlarge, entered, textx, texty, st7789.BLUE)
-
-        if xa.read() < minval:
-            collum -= 1
-        if xa.read() > maxval:
-            collum += 1
-        if ya.read() < minval:
-            row -= 1
-        if ya.read() > maxval:
-            row += 1
-
-        if row > 2:
-            row = 2
-        if row < 0:
-            row = 0
-        if collum > 5:
-            collum = 5
-        if collum < 0:
-            collum = 0
-
-        display.rect(3+40*collum, 130+34*row, 34, 30, st7789.BLACK)
-
-def redrawletters():
-    letter=0
-    for i in range(0,5):
-        for n in range(0,10):
-            display.text(font, letters[letter], 7+n*24, 153+i*17, st7789.YELLOW)
-            letter += 1
-    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
-    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
-
-    display.rect(74, 218, 68, 15, st7789.WHITE)
-    display.rect(194, 218, 44, 15, st7789.WHITE)
-
-    display.text(font, 'UP', 5, 222, st7789.YELLOW)
-    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
-    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
-
-def redrawlettersupper():
-    letter=0
-    for i in range(0,5):
-        for n in range(0,10):
-            display.text(font, lettersupper[letter], 7+n*24, 153+i*17, st7789.YELLOW)
-            letter += 1
-    display.fill_rect(190, 218, 50, 20, st7789.BLACK)
-    display.fill_rect(70, 218, 74, 20, st7789.BLACK)
-
-    display.rect(74, 218, 68, 15, st7789.WHITE)
-    display.rect(194, 218, 44, 15, st7789.WHITE)
-
-    display.text(font, 'UP', 5, 222, st7789.YELLOW)
-    display.text(font, 'SPACE', 87, 222, st7789.YELLOW)
-    display.text(font, 'ENTER', 196, 222, st7789.YELLOW)
-
-def keyboard(pretyped=''):
-    display.fill(0)
-    typed = pretyped
-    selected = ''
-    letter = 0
-
-    row = 0
-    collum = 0
-    width = 20
-
-    display.rect(width, 2, 200, 15, st7789.WHITE)
-
-    def updatekeyboard():
-        for i in range(0,5):
-            for n in range(0,10):
-                display.rect(2+n*24, 150+i*17, 20, 15, st7789.WHITE)
-
-    updatekeyboard()
-
-    redrawletters()
-
-    display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
-
-    upper = False
-
-    while True:
-        time.sleep(0.15)
-        display.rect(2+collum*24, 150+row*17, width, 15, st7789.WHITE)
-
-        display.text(font, typed, 25, 5, st7789.YELLOW)
-        if xa.read() <= minval:
-            collum -= 1
-        if xa.read() >= maxval:
-            collum += 1
-
-        if ya.read() <= minval:
-            row -= 1
-        if ya.read() >= maxval:
-            row += 1
-            
-        if row < 0:
-            row = 0
-        if collum < 0:
-            collum = 0
-        if row > 4:
-            row = 4
-        if collum > 9:
-            collum = 9
-            
-        if row == 4 and collum >= 3 and collum <= 5:
-            width = 68
-        elif row == 4 and collum >= 8 and collum <= 9:
-            width = 44
-        else:
-            width = 20
-            
-        if btn.value() == 0:
-            if selected == 'enter':
-                return typed
-                break
-            else:
-                if upper == False:
-                    selected = letters[row * 10 + collum]
-                    typed = typed + selected
-                else:
-                    selected = lettersupper[row * 10 + collum]
-                    typed = typed + selected
-                    upper = False
-                    redrawletters()
-        if row == 4 and collum == 8:
-            selected = 'enter'
-        elif row == 4 and collum == 0:
-            selected = ''
-            upper = True
-            redrawlettersupper()
-
-        display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
-        
-def unubstructingkeyboard(pretyped=''):
-    typed = pretyped
-    selected = ''
-    letter = 0
-    row = 0
-    collum = 0
-    width = 20
-
-    display.rect(width, 2, 200, 15, st7789.WHITE)
-
-    def updatekeyboard():
-        for i in range(0,5):
-            for n in range(0,10):
-                display.rect(2+n*24, 150+i*17, 20, 15, st7789.WHITE)
-
-    updatekeyboard()
-    
-    redrawletters()
-
-    display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
-
-    upper = False
-
-    while True:
-        time.sleep(0.15)
-        display.rect(2+collum*24, 150+row*17, width, 15, st7789.WHITE)
-
-        display.text(font, typed, 25, 5, st7789.YELLOW)
-        if xa.read() <= minval:
-            collum -= 1
-        if xa.read() >= maxval:
-            collum += 1
-
-        if ya.read() <= minval:
-            row -= 1
-        if ya.read() >= maxval:
-            row += 1
-            
-        if row < 0:
-            row = 0
-        if collum < 0:
-            collum = 0
-        if row > 4:
-            row = 4
-        if collum > 9:
-            collum = 9
-            
-        if row == 4 and collum >= 3 and collum <= 5:
-            width = 68
-        elif row == 4 and collum >= 8 and collum <= 9:
-            width = 44
-        else:
-            width = 20
-            
-        if btn.value() == 0:
-            if selected == 'enter':
-                return typed
-                break
-            else:
-                if upper == False:
-                    selected = letters[row * 10 + collum]
-                    typed = typed + selected
-                else:
-                    selected = lettersupper[row * 10 + collum]
-                    typed = typed + selected
-                    upper = False
-                    redrawletters()
-        if row == 4 and collum == 8:
-            selected = 'enter'
-        elif row == 4 and collum == 0:
-            selected = ''
-            upper = True
-            redrawlettersupper()
-
-        display.rect(2+collum*24, 150+row*17, width, 15, st7789.RED)
+    display.line(105+20, 120-20, 135+20, 120-20, st7789.BLUE)
+    display.line(105+20, 120-20, 105+20, 145-20, st7789.BLUE)
+    display.line(105+20, 145-20, 135+20, 145-20, st7789.BLUE)
+    display.line(135+20, 145-20, 135+20, 170-20, st7789.BLUE)
+    display.line(135+20, 170-20, 105+20, 170-20, st7789.BLUE)
 
 def screensaver():
     cycles=0
@@ -287,7 +46,7 @@ def screensaver():
             display.text(fontlarge, 'Micro OS', random.randint(10,110),random.randint(10,230), st7789.color565(random.getrandbits(8),random.getrandbits(8),random.getrandbits(8)))
             cycles=0
 #        display.fill_rect(random.randint(0,200), random.randint(0,200), random.randint(0,200),random.randint(0,200))
-        if xa.read() >= maxval or xa.read() <= minval or ya.read() >= maxval or ya.read() <= minval or btn.value() == 0:
+        if pressed() or left() or right() or up() or down():
             break
         cycles+=1
         time.sleep(0.2)
@@ -323,9 +82,6 @@ def redrawcanvas():
     display.fill_rect(165+18, 185, 30, 10, st7789.WHITE)
     display.fill_rect(170+18, 190, 20, 5, st7789.BLACK)
 
-    display.fill_rect(15, 80-upamount, 215, 70, st7789.WHITE)
-    display.fill_rect(70, 150-upamount, 100, 70, st7789.YELLOW)
-
     #show symbol again
     microoswords()
     
@@ -342,7 +98,7 @@ def appstorecheck():
         display.rect(108, 124, 24, 14, st7789.WHITE)
         while True:
             time.sleep(0.25)
-            if not btn.value() or xa.read() <= minval:
+            if pressed() or left():
                 break
 
 def split_string(s, n):
@@ -384,11 +140,11 @@ def appstore():
         time.sleep(0.15)
         display.rect(1, 11+10*selected, 238, 10, st7789.BLACK)
 
-        if xa.read() <= minval:
+        if left():
             break
-        if ya.read() >= maxval:
+        if down():
             selected += 1
-        if ya.read() <= minval:
+        if up():
             selected -= 1
         if selected < 0:
             appsrefresh()
@@ -397,13 +153,13 @@ def appstore():
         if selected > line-1:
             selected = 0
 
-        if btn.value() == 0:
+        if pressed():
             display.fill(0)
             display.text(font, apps[selected], 75, 1)
             r=requests.get(links[selected]+'details.txt')
             results=r.text
             line = 0
-            for i in split_string(results, 30):
+            for i in split_string(results, 29):
                 display.text(font, i, 2, 12+10*line)
                 line += 1
 
@@ -414,9 +170,9 @@ def appstore():
                 display.text(font, 'REMOVE', 90, 218, st7789.RED)
             while True:
                 time.sleep(0.15)
-                if xa.read() <= minval:
+                if left():
                     break
-                if btn.value() == 0:
+                if pressed():
                     if not apps[selected] in os.listdir('/apps'):
                         display.text(font, 'Installing', 80, 218, st7789.BLUE)
                         os.mkdir('/apps/'+apps[selected])
@@ -482,21 +238,21 @@ def app_menu():
     while True:
         time.sleep(0.15)
         
-        if btn.value() == 0:
+        if pressed():
             execfile('/apps/'+apps[selectedapp]+'/main.py')
             app_menu()
 
-        if ya.read() < minval:
+        if up():
             print(selectedapp)
             updateapps()
             selectedapp -= 1
 
-        if ya.read() > maxval:
+        if down():
             print(selectedapp)
             updateapps()
             selectedapp += 1
 
-        if xa.read() < minval:
+        if left():
             break
 
         if selectedapp >= appamount:
@@ -507,3 +263,14 @@ def app_menu():
             selectedapp = appamount-1
 
         display.rect(5, 10 * selectedapp, 230, 10, st7789.RED)
+
+
+def savesettings():
+    exec('settingsfile = "OSversion:"+osversion')
+    exec('networkfile = netname:"+ssid+"\\nnetpass:"+passwd+"\\nnetstat:"+netstat')
+    file = open('/system/systemsettings.txt', 'w')
+    file.write(settingsfile)
+    file.close()
+    file = open('/system/networkConfig.txt', 'w')
+    file.write(networkfile)
+    file.close()
