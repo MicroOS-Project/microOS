@@ -1,5 +1,3 @@
 # Security Policy
 
-## Reporting a Vulnerability
-
-If you find a security issue in my code, please let me know and I'll try to address it.
+I am sure that my code has many vulnurabilities, so if you find one don't be too suprized. 😃
