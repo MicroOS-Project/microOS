@@ -54,4 +54,4 @@ if btn.value() != 0:
     try:
         execfile('/system/microOS.py')
     except Exception as e:
-        log('An error ocurred in the system.\nError:\n'+str(e)+'\nPlease refer to the instructions at https://github.com/asherevan/microOS/wiki/Reporting%E2%80%90bugs to report this bug.')
+        log('An error occurred in the system.\nError:\n'+str(e)+'\nPlease refer to the instructions at https://github.com/asherevan/microOS/wiki/Reporting%E2%80%90bugs to report this bug.')
