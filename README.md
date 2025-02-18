@@ -1,16 +1,5 @@
-Our attempt at creating an operating system like program for ESP32.
+## MicroOS
 
-You will need to upload [this](https://github.com/russhughes/st7789_mpy) firmware to your device in order for it to work.
+Our attempt at creating an operating system like program for the [LilyGo T-Deck](https://lilygo.cc/products/t-deck) (Only that board officialy supported for now but we will add more soon).
 
-If you would like to create one of these devices, contact me and I'll send instructions.
-
-
-<h3>TODO:</h3>
-
-ADD DOCUMENTATION.
-
-Make the screensaver appear in all pages.
-
-Fix settings menu bug after you go into the OS info menu and exit then exit again.
-
-If someone would like to create a circuit diagram for this, please do! If you do, just submit a pull request with it!
+We are currently working on switching to [LVGL](https://github.com/lvgl-micropython/lvgl_micropython) for our graphics driver so some of the commits we are going to be releasing will most likely be non-functional for a while.
