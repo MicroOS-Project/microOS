@@ -1,0 +1,1 @@
+These are fonts converted to the LVGL format by https://lvgl.io/tools/fontconverter from https://www.jetbrains.com/lp/mono. Only the jetbrains_mono_thin_50 is currently used (For the main Logo on the boot and main screen). If the others are used as default fonts (currently) things might not work because of the special symbols that LVGL has.

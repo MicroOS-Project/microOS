@@ -1,1 +1,3 @@
-OSversion:0.19.5a
+OSversion:0.20.10a
+timezone:10
+brightness:100
